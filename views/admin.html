@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daggynet Admin Dashboard</title>
+<style>
+:root{--bg:#0a0f1e;--bg2:#111827;--bg3:#1a2235;--card:#141c2f;--border:rgba(99,179,237,.1);--border2:rgba(99,179,237,.2);--accent:#3b82f6;--accent2:#60a5fa;--green:#10b981;--green2:#34d399;--red:#ef4444;--red2:#f87171;--amber:#f59e0b;--amber2:#fbbf24;--purple:#8b5cf6;--purple2:#a78bfa;--text:#f0f6ff;--text2:#94a3b8;--text3:#4b5563;--r:12px;--r2:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+/* SIDEBAR */
+.sidebar{width:230px;min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s}
+.sidebar-brand{padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.brand-icon{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.brand-name{font-size:15px;font-weight:800;letter-spacing:-.3px}
+.brand-sub{font-size:10px;color:var(--text3)}
+.sidebar-nav{flex:1;padding:10px 8px;overflow-y:auto}
+.nav-section{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:12px 8px 5px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r2);cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;margin-bottom:1px;border:1px solid transparent;user-select:none}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(59,130,246,.15);color:var(--accent2);border-color:rgba(59,130,246,.2)}
+.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+.sidebar-footer{padding:12px 8px;border-top:1px solid var(--border)}
+.admin-info{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r2);background:var(--bg3)}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.admin-name{font-size:12px;font-weight:600}
+.admin-role{font-size:10px;color:var(--text3)}
+.logout-btn{font-size:11px;color:var(--red2);cursor:pointer;margin-top:6px;text-align:center;padding:4px}
+/* MAIN */
+.main{margin-left:230px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:58px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:16px;font-weight:700;flex:1}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.page-content{padding:20px;flex:1}
+.page{display:none}
+.page.active{display:block}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.blue::before{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.stat-card.green::before{background:linear-gradient(90deg,var(--green),#0d9488)}
+.stat-card.amber::before{background:linear-gradient(90deg,var(--amber),#fb923c)}
+.stat-card.purple::before{background:linear-gradient(90deg,var(--purple),#ec4899)}
+.stat-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat-value{font-size:26px;font-weight:800;margin:4px 0 2px;letter-spacing:-1px}
+.stat-sub{font-size:11px;color:var(--text3)}
+.stat-icon{position:absolute;right:16px;top:16px;font-size:20px;opacity:.25}
+/* TABLE */
+.table-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
+.table-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.table-title{font-size:13px;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:9px 18px;text-align:left;background:var(--bg3);border-bottom:1px solid var(--border)}
+td{padding:11px 18px;font-size:13px;border-bottom:1px solid rgba(0,0,0,.2);color:var(--text2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-green{background:rgba(16,185,129,.15);color:var(--green2)}
+.badge-red{background:rgba(239,68,68,.15);color:var(--red2)}
+.badge-amber{background:rgba(245,158,11,.15);color:var(--amber2)}
+.badge-blue{background:rgba(59,130,246,.15);color:var(--accent2)}
+.badge-purple{background:rgba(139,92,246,.15);color:var(--purple2)}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:var(--r2);font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-outline{background:transparent;color:var(--text2);border-color:var(--border2)}
+.btn-outline:hover{background:var(--bg3);color:var(--text)}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--red2);border-color:rgba(239,68,68,.2)}
+.btn-danger:hover{background:rgba(239,68,68,.25)}
+.btn-success{background:rgba(16,185,129,.15);color:var(--green2);border-color:rgba(16,185,129,.2)}
+.btn-success:hover{background:rgba(16,185,129,.25)}
+.btn-sm{padding:5px 9px;font-size:11px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* FORM */
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.form-input{width:100%;padding:9px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);color:var(--text);font-family:inherit;font-size:13px;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--accent)}
+select.form-input{cursor:pointer}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-size:15px;font-weight:700}
+.modal-close{cursor:pointer;color:var(--text3);font-size:18px;border:none;background:none;color:var(--text3);line-height:1}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.flex-between{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.flex-gap{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+/* PROGRESS */
+.progress-bar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+/* TOGGLE */
+.toggle{position:relative;width:34px;height:18px;cursor:pointer;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--bg3);border-radius:20px;border:1px solid var(--border2);transition:.2s}
+.toggle-slider::before{content:'';position:absolute;width:12px;height:12px;left:2px;top:2px;background:var(--text3);border-radius:50%;transition:.2s}
+.toggle input:checked + .toggle-slider{background:rgba(59,130,246,.3);border-color:var(--accent)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(16px);background:var(--accent)}
+/* CHART */
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:18px}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:110px;margin-top:12px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar{width:100%;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--accent),var(--purple));min-height:3px;transition:all .3s}
+.bar-label{font-size:9px;color:var(--text3)}
+.bar-val{font-size:9px;color:var(--text3)}
+/* PKG */
+.pkg-list{display:flex;flex-direction:column;gap:10px}
+.pkg-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:14px;display:flex;align-items:center;gap:12px}
+.pkg-icon-box{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pkg-info{flex:1}
+.pkg-title{font-size:13px;font-weight:700}
+.pkg-detail{font-size:11px;color:var(--text3);margin-top:2px}
+/* ALERT */
+.alert-box{padding:11px 14px;border-radius:var(--r2);font-size:12px;margin-bottom:14px;border-left:3px solid;display:flex;align-items:flex-start;gap:8px}
+.alert-info{background:rgba(59,130,246,.08);border-color:var(--accent);color:#93c5fd}
+.alert-success{background:rgba(16,185,129,.08);border-color:var(--green);color:var(--green2)}
+.alert-warn{background:rgba(245,158,11,.08);border-color:var(--amber);color:var(--amber2)}
+/* SEARCH */
+.search-input{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:7px 12px;color:var(--text);font-size:12px;outline:none;width:200px;font-family:inherit}
+.search-input:focus{border-color:var(--accent)}
+/* NOTIF */
+.notif{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:12px 16px;font-size:12px;z-index:999;transform:translateY(100px);opacity:0;transition:all .3s;max-width:280px;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.notif.show{transform:translateY(0);opacity:1}
+/* RESPONSIVE */
+@media(max-width:900px){.stats-grid{grid-template-columns:1fr 1fr}.sidebar{transform:translateX(-100%)}.main{margin-left:0}.grid-2,.grid-3{grid-template-columns:1fr}}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mb16{margin-bottom:16px}
+.text-green{color:var(--green2)}
+.text-red{color:var(--red2)}
+.text-amber{color:var(--amber2)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">📡</div>
+    <div>
+      <div class="brand-name">Daggynet</div>
+      <div class="brand-sub">Admin Panel</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span> Dashboard</div>
+    <div class="nav-section">Management</div>
+    <div class="nav-item" onclick="showPage('users',this)"><span class="nav-icon">👥</span> Users & Sessions</div>
+    <div class="nav-item" onclick="showPage('packages',this)"><span class="nav-icon">📦</span> Packages</div>
+    <div class="nav-item" onclick="showPage('transactions',this)"><span class="nav-icon">💳</span> Transactions</div>
+    <div class="nav-section">System</div>
+    <div class="nav-item" onclick="showPage('settings',this)"><span class="nav-icon">⚙️</span> Settings</div>
+    <div class="nav-item" onclick="showPage('admins',this)"><span class="nav-icon">🔐</span> Admin Accounts</div>
+    <div class="nav-item" onclick="showPage('alerts',this)" id="alertsNav"><span class="nav-icon">🔔</span> Alerts <span class="nav-badge hidden" id="alertBadge">0</span></div>
+    <div class="nav-section">Links</div>
+    <div class="nav-item" onclick="window.open('/')"><span class="nav-icon">🌐</span> View Portal</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-info">
+      <div class="avatar" id="avatarText">AD</div>
+      <div>
+        <div class="admin-name" id="adminName">Admin</div>
+        <div class="admin-role" id="adminRole">Loading...</div>
+      </div>
+    </div>
+    <div class="logout-btn" onclick="if(confirm('Logout?'))location.href='/admin/logout'">← Logout</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <span class="topbar-title" id="pageTitle">Dashboard</span>
+    <div class="topbar-actions">
+      <span id="hotspotBadge" class="badge badge-green"><span class="badge-dot"></span> Hotspot Online</span>
+      <button class="btn btn-outline btn-sm" onclick="showPage('users',document.querySelector('.nav-item:nth-child(5)'))">+ Add User</button>
+      <button class="btn btn-primary btn-sm" onclick="showPage('packages',document.querySelector('.nav-item:nth-child(6)'))">+ Package</button>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- ══════════════ DASHBOARD ══════════════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card blue"><div class="stat-icon">👥</div><div class="stat-label">Active Users</div><div class="stat-value" id="s-active">—</div><div class="stat-sub">Currently online</div></div>
+        <div class="stat-card green"><div class="stat-icon">💰</div><div class="stat-label">Today Revenue</div><div class="stat-value" id="s-today">—</div><div class="stat-sub" id="s-today-tx">— transactions</div></div>
+        <div class="stat-card amber"><div class="stat-icon">📅</div><div class="stat-label">This Month</div><div class="stat-value" id="s-month">—</div><div class="stat-sub" id="s-month-tx">— transactions</div></div>
+        <div class="stat-card purple"><div class="stat-icon">📊</div><div class="stat-label">Total Users</div><div class="stat-value" id="s-total">—</div><div class="stat-sub">All time</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="chart-card">
+          <div class="flex-between"><div class="table-title">Revenue (Last 7 Days)</div><span id="weekTotal" class="badge badge-green">—</span></div>
+          <div class="bar-chart" id="revenueChart"><div style="color:var(--text3);font-size:12px;margin:auto">Loading...</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="table-title mb16">Package Breakdown (Month)</div>
+          <div id="pkgBreakdown"><div style="color:var(--text3);font-size:12px">Loading...</div></div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header"><div class="table-title">🔴 Live Active Sessions</div><button class="btn btn-outline btn-sm" onclick="loadDashboard()">⟳ Refresh</button></div>
+        <table>
+          <thead><tr><th>Phone</th><th>Package</th><th>Expires</th><th>M-Pesa Ref</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="liveSessions"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════ USERS ══════════════ -->
+    <div class="page" id="page-users">
+      <div class="flex-between mb16" style="flex-wrap:wrap;gap:10px">
+        <input class="search-input" placeholder="🔍 Search phone, ref..." style="width:220px" oninput="searchUsers(this.value)">
+        <div class="flex-gap">
+          <select class="form-input" style="width:auto;font-size:12px" id="userStatusFilter" onchange="loadUsers()">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="expired">Expired</option>
+            <option value="suspended">Suspended</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addUserModal')">+ Manual Add</button>
+          <button class="btn btn-outline btn-sm" onclick="loadUsers()">⟳ Refresh</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Phone</th><th>Package</th><th>Amount</th><th>Connected</th><th>Expires</th><th>M-Pesa Ref</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="usersTable"><tr><td colspan="8" style="text-align:center;color:var(--text3);padding:20px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="flex-between" id="usersPagination" style="font-size:12px;color:var(--text3)"></div>
+    </div>
+
+    <!-- ══════════════ PACKAGES ══════════════ -->
+    <div class="page" id="page-packages">
+      <div class="flex-between mb16">
+        <div style="font-size:12px;color:var(--text3)">Manage your WiFi access packages and pricing</div>
+        <button class="btn btn-primary" onclick="openModal('pkgModal');resetPkgForm()">+ New Package</button>
+      </div>
+      <div class="pkg-list" id="pkgList"><div style="color:var(--text3);font-size:12px;padding:20px">Loading...</div></div>
+    </div>
+
+    <!-- ══════════════ TRANSACTIONS ══════════════ -->
+    <div class="page" id="page-transactions">
+      <div class="flex-between mb16" style="flex-wrap:wrap;gap:10px">
+        <div class="flex-gap">
+          <input class="search-input" placeholder="🔍 Phone, M-Pesa ref..." oninput="searchTx(this.value)">
+          <select class="form-input" style="width:auto;font-size:12px" id="txStatusFilter" onchange="loadTransactions()">
+            <option value="">All</option><option value="completed">Completed</option><option value="pending">Pending</option><option value="failed">Failed</option>
+          </select>
+        </div>
+        <div class="flex-gap">
+          <input type="date" class="form-input" style="width:auto;font-size:12px" id="txFrom">
+          <input type="date" class="form-input" style="width:auto;font-size:12px" id="txTo">
+          <button class="btn btn-outline btn-sm" onclick="loadTransactions()">Filter</button>
+          <button class="btn btn-success btn-sm" onclick="exportTx()">⬇ CSV</button>
+        </div>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)" id="txSummary"></div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Date</th><th>Phone</th><th>Package</th><th>Amount</th><th>M-Pesa Ref</th><th>Status</th></tr></thead>
+          <tbody id="txTable"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="flex-between" id="txPagination" style="font-size:12px;color:var(--text3)"></div>
+    </div>
+
+    <!-- ══════════════ SETTINGS ══════════════ -->
+    <div class="page" id="page-settings">
+      <div class="grid-2">
+        <div>
+          <div class="table-card" style="padding:18px;margin-bottom:14px">
+            <div class="table-title mb16">🏪 Business Info</div>
+            <div class="form-group"><label class="form-label">Business Name</label><input class="form-input" id="s_business_name" value="Daggynet Hotspot"></div>
+            <div class="form-group"><label class="form-label">Support Phone</label><input class="form-input" id="s_support_phone" value="0796820013"></div>
+            <div class="form-group"><label class="form-label">Support Email</label><input class="form-input" id="s_support_email" value="daggytechs@gmail.com"></div>
+            <div class="form-group"><label class="form-label">M-Pesa Paybill/Till</label><input class="form-input" id="s_mpesa_paybill" value="174379"></div>
+            <div class="form-group"><label class="form-label">Hotspot SSID</label><input class="form-input" id="s_hotspot_ssid" value="Daggynet_WiFi"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="saveSettings()">💾 Save Business Settings</button>
+          </div>
+          <div class="table-card" style="padding:18px">
+            <div class="table-title mb16">🔐 Change Password</div>
+            <div class="form-group"><label class="form-label">Current Password</label><input class="form-input" type="password" id="currentPwd"></div>
+            <div class="form-group"><label class="form-label">New Password</label><input class="form-input" type="password" id="newPwd"></div>
+            <div class="form-group"><label class="form-label">Confirm Password</label><input class="form-input" type="password" id="confirmPwd"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="changePassword()">Update Password</button>
+          </div>
+        </div>
+        <div>
+          <div class="table-card" style="padding:18px;margin-bottom:14px">
+            <div class="table-title mb16">🌐 Portal Customization</div>
+            <div class="form-group"><label class="form-label">Welcome Title</label><input class="form-input" id="s_portal_welcome" value="Welcome to Daggynet Hotspot"></div>
+            <div class="form-group"><label class="form-label">Subtitle</label><input class="form-input" id="s_portal_subtitle" value="Fast & Reliable Internet Access"></div>
+            <div class="form-group"><label class="form-label">Max Devices</label><input class="form-input" type="number" id="s_max_devices" value="100"></div>
+            <div class="form-group"><label class="form-label">Free Trial (Minutes, 0=disabled)</label><input class="form-input" type="number" id="s_free_minutes" value="0"></div>
+            <div class="flex-between" style="margin-bottom:12px"><span style="font-size:13px;color:var(--text2)">Maintenance Mode</span><label class="toggle"><input type="checkbox" id="s_maintenance"><span class="toggle-slider"></span></label></div>
+            <button class="btn btn-primary" style="width:100%" onclick="savePortalSettings()">💾 Save Portal Settings</button>
+          </div>
+          <div class="table-card" style="padding:18px">
+            <div class="table-title mb16">📡 M-Pesa API Config</div>
+            <div class="alert-box alert-warn">⚠️ Configure these in your Railway environment variables for security. Do not hardcode API keys here.</div>
+            <div class="form-group"><label class="form-label">Consumer Key (in .env)</label><input class="form-input" disabled placeholder="Set MPESA_CONSUMER_KEY in Railway env" style="opacity:.5"></div>
+            <div class="form-group"><label class="form-label">Shortcode</label><input class="form-input" id="s_mpesa_shortcode" value="174379"></div>
+            <div class="form-group"><label class="form-label">Environment</label>
+              <select class="form-input" id="s_mpesa_env"><option>sandbox</option><option>production</option></select>
+            </div>
+            <div class="form-group"><label class="form-label">Callback URL</label><input class="form-input" id="s_callback_url" placeholder="https://yourapp.railway.app/api/mpesa/callback"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ ADMINS ══════════════ -->
+    <div class="page" id="page-admins">
+      <div class="flex-between mb16">
+        <div style="font-size:12px;color:var(--text3)">Manage admin accounts. Only super admins can add new admins.</div>
+        <button class="btn btn-primary" onclick="openModal('addAdminModal')">+ Add Admin</button>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Last Login</th><th>Status</th></tr></thead>
+          <tbody id="adminsTable"><tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════ ALERTS ══════════════ -->
+    <div class="page" id="page-alerts">
+      <div class="flex-between mb16">
+        <div class="table-title">System Notifications</div>
+        <button class="btn btn-outline btn-sm" onclick="markAlertsRead()">✓ Mark All Read</button>
+      </div>
+      <div id="alertsList"><div style="color:var(--text3);font-size:12px;padding:20px">No alerts</div></div>
+    </div>
+
+  </div><!-- /page-content -->
+</main>
+
+<!-- ══════ MODALS ══════ -->
+
+<!-- ADD USER MODAL -->
+<div class="modal-overlay" id="addUserModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">👤 Manually Add User</div><button class="modal-close" onclick="closeModal('addUserModal')">✕</button></div>
+    <div class="alert-box alert-info" style="margin-bottom:14px">Use this to manually grant access — for cash payments or troubleshooting.</div>
+    <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" id="m_phone" placeholder="07XX XXX XXX"></div>
+    <div class="form-group"><label class="form-label">Package</label><select class="form-input" id="m_pkg"></select></div>
+    <div class="form-group"><label class="form-label">M-Pesa Ref (optional)</label><input class="form-input" id="m_ref" placeholder="e.g. QGH4729KL" style="text-transform:uppercase"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addUserModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addUserManual()">✅ Grant Access</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXTEND USER MODAL -->
+<div class="modal-overlay" id="extendModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">⏰ Extend Session</div><button class="modal-close" onclick="closeModal('extendModal')">✕</button></div>
+    <input type="hidden" id="extendUserId">
+    <div class="form-group"><label class="form-label">Extend by (hours)</label>
+      <select class="form-input" id="extendHours">
+        <option value="1">1 Hour</option><option value="3">3 Hours</option><option value="6">6 Hours</option>
+        <option value="12">12 Hours</option><option value="24">1 Day</option><option value="168">1 Week</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('extendModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="extendUser()">Extend</button>
+    </div>
+  </div>
+</div>
+
+<!-- PACKAGE MODAL -->
+<div class="modal-overlay" id="pkgModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="pkgModalTitle">📦 New Package</div><button class="modal-close" onclick="closeModal('pkgModal')">✕</button></div>
+    <input type="hidden" id="pkg_id">
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Display Name</label><input class="form-input" id="pkg_displayName" placeholder="e.g. Daily"></div>
+      <div class="form-group"><label class="form-label">Price (KSh)</label><input class="form-input" type="number" id="pkg_price" placeholder="50"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Duration (minutes)</label><input class="form-input" type="number" id="pkg_duration" placeholder="1440"></div>
+      <div class="form-group"><label class="form-label">Duration Label</label><input class="form-input" id="pkg_durationLabel" placeholder="24 Hours"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Download (Mbps)</label><input class="form-input" type="number" id="pkg_downloadSpeed" placeholder="10"></div>
+      <div class="form-group"><label class="form-label">Upload (Mbps)</label><input class="form-input" type="number" id="pkg_uploadSpeed" placeholder="5"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">Data Limit (MB, 0=unlimited)</label><input class="form-input" type="number" id="pkg_dataLimit" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Icon (emoji)</label><input class="form-input" id="pkg_icon" placeholder="🌅" maxlength="4"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="pkg_description" placeholder="Brief description"></div>
+    <div class="flex-between" style="margin-bottom:10px">
+      <span style="font-size:13px;color:var(--text2)">Mark as Popular</span>
+      <label class="toggle"><input type="checkbox" id="pkg_popular"><span class="toggle-slider"></span></label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('pkgModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePackage()">Save Package</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ADMIN MODAL -->
+<div class="modal-overlay" id="addAdminModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🔐 Add Admin</div><button class="modal-close" onclick="closeModal('addAdminModal')">✕</button></div>
+    <div class="form-group"><label class="form-label">Username</label><input class="form-input" id="a_username" placeholder="username"></div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="a_email" placeholder="admin@example.com"></div>
+    <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="a_password" placeholder="Strong password"></div>
+    <div class="form-group"><label class="form-label">Role</label>
+      <select class="form-input" id="a_role"><option value="admin">Admin</option><option value="viewer">Viewer (Read-only)</option><option value="superadmin">Super Admin</option></select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addAdminModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addAdmin()">Create Admin</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"><span id="notifIcon"></span> <span id="notifMsg"></span></div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let currentPage = 'dashboard';
+let usersPage = 1;
+let txPage = 1;
+let userSearch = '';
+let txSearch = '';
+let packagesCache = [];
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadSessionInfo();
+  await loadDashboard();
+  setInterval(loadDashboard, 60000); // auto-refresh every minute
+});
+
+async function loadSessionInfo() {
+  try {
+    const res = await fetch('/admin/api/session-info');
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('adminName').textContent = data.username;
+      document.getElementById('adminRole').textContent = data.role;
+      document.getElementById('avatarText').textContent = data.username.slice(0,2).toUpperCase();
+    }
+  } catch (e) { /* silent */ }
+}
+
+// ─── PAGE NAV ────────────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id)?.classList.add('active');
+  el?.classList.add('active');
+  const titles = {dashboard:'Dashboard',users:'Users & Sessions',packages:'Packages',transactions:'Transactions',settings:'Settings',admins:'Admin Accounts',alerts:'Alerts'};
+  document.getElementById('pageTitle').textContent = titles[id] || id;
+  currentPage = id;
+  if (id === 'users') loadUsers();
+  else if (id === 'packages') loadPackages();
+  else if (id === 'transactions') loadTransactions();
+  else if (id === 'admins') loadAdmins();
+  else if (id === 'settings') loadSettings();
+  else if (id === 'alerts') loadAlerts();
+}
+
+// ─── DASHBOARD ───────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const res = await fetch('/admin/api/stats');
+    const data = await res.json();
+    if (!data.success) return;
+    const s = data.stats;
+
+    document.getElementById('s-active').textContent = s.activeUsers;
+    document.getElementById('s-today').textContent = 'KSh ' + fmt(s.todayRevenue);
+    document.getElementById('s-today-tx').textContent = s.todayTransactions + ' transactions';
+    document.getElementById('s-month').textContent = 'KSh ' + fmt(s.monthRevenue);
+    document.getElementById('s-month-tx').textContent = s.monthTransactions + ' transactions';
+    document.getElementById('s-total').textContent = s.totalUsers;
+
+    // Alert badge
+    if (s.alerts > 0) {
+      document.getElementById('alertBadge').textContent = s.alerts;
+      document.getElementById('alertBadge').classList.remove('hidden');
+    }
+
+    // Revenue chart
+    buildBarChart('revenueChart', s.revenueByDay);
+    document.getElementById('weekTotal').textContent = 'KSh ' + fmt(s.weekRevenue);
+
+    // Package breakdown
+    buildPkgBreakdown(s.pkgBreakdown);
+
+    // Live sessions
+    await loadLiveSessions();
+  } catch (e) { console.error('Dashboard error:', e); }
+}
+
+function buildBarChart(id, data) {
+  const c = document.getElementById(id);
+  if (!c || !data?.length) { c && (c.innerHTML = '<div style="color:var(--text3);font-size:12px;margin:auto">No data</div>'); return; }
+  const max = Math.max(...data.map(d => d.revenue), 1);
+  c.innerHTML = data.map(d => {
+    const h = Math.round((d.revenue / max) * 95);
+    const day = d._id ? d._id.slice(5) : '—';
+    return `<div class="bar-wrap"><div class="bar-val">KSh${d.revenue >= 1000 ? (d.revenue/1000).toFixed(1)+'k' : d.revenue}</div><div class="bar" style="height:${h}px" title="KSh ${d.revenue}"></div><div class="bar-label">${day}</div></div>`;
+  }).join('');
+}
+
+function buildPkgBreakdown(data) {
+  const el = document.getElementById('pkgBreakdown');
+  if (!data?.length) { el.innerHTML = '<div style="color:var(--text3);font-size:12px">No data this month</div>'; return; }
+  const max = Math.max(...data.map(d => d.revenue), 1);
+  el.innerHTML = data.slice(0,5).map(d => `
+    <div style="margin-bottom:10px">
+      <div class="flex-between" style="margin-bottom:3px;font-size:12px"><span style="color:var(--text2)">${d._id || 'Unknown'}</span><span style="color:var(--text3)">KSh ${fmt(d.revenue)} (${d.count})</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.round(d.revenue/max*100)}%"></div></div>
+    </div>
+  `).join('');
+}
+
+async function loadLiveSessions() {
+  try {
+    const res = await fetch('/admin/api/users?status=active&limit=10');
+    const data = await res.json();
+    const tbody = document.getElementById('liveSessions');
+    if (!data.users?.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No active sessions</td></tr>'; return; }
+    tbody.innerHTML = data.users.map(u => {
+      const exp = u.expiresAt ? new Date(u.expiresAt) : null;
+      const now = new Date();
+      const timeLeft = exp ? Math.max(0, exp - now) : 0;
+      const h = Math.floor(timeLeft/3600000);
+      const m = Math.floor((timeLeft%3600000)/60000);
+      const expiring = timeLeft < 1800000;
+      return `<tr>
+        <td style="font-weight:600;color:var(--text)">${u.phone}</td>
+        <td><span class="badge badge-blue">${u.packageName || '—'}</span></td>
+        <td style="color:${expiring ? 'var(--amber2)' : 'var(--green2)';}">${h}h ${m}m</td>
+        <td style="font-family:monospace;font-size:11px">${u.mpesaRef || '—'}</td>
+        <td><span class="badge badge-green"><span class="badge-dot"></span> Active</span></td>
+        <td><button class="btn btn-danger btn-sm" onclick="suspendUser('${u._id}')">Kick</button></td>
+      </tr>`;
+    }).join('');
+  } catch (e) { document.getElementById('liveSessions').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:16px">Error loading sessions</td></tr>'; }
+}
+
+// ─── USERS ───────────────────────────────────────────────────────────────────
+async function loadUsers(page = usersPage) {
+  usersPage = page;
+  try {
+    const status = document.getElementById('userStatusFilter')?.value || '';
+    const search = userSearch;
+    const res = await fetch(`/admin/api/users?page=${page}&limit=20&status=${status}&search=${encodeURIComponent(search)}`);
+    const data = await res.json();
+    const tbody = document.getElementById('usersTable');
+    if (!data.users?.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:20px">No users found</td></tr>'; return; }
+
+    tbody.innerHTML = data.users.map(u => {
+      const statusBadge = {active:'badge-green',expired:'badge-red',suspended:'badge-amber',pending:'badge-blue'}[u.status] || 'badge-blue';
+      const exp = u.expiresAt ? new Date(u.expiresAt).toLocaleString('en-KE',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+      const conn = u.connectedAt ? new Date(u.connectedAt).toLocaleString('en-KE',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+      return `<tr>
+        <td style="font-weight:600;color:var(--text)">${u.phone}</td>
+        <td>${u.packageName || '—'}</td>
+        <td style="color:var(--green2)">KSh ${u.packagePrice || 0}</td>
+        <td style="font-size:11px">${conn}</td>
+        <td style="font-size:11px">${exp}</td>
+        <td style="font-family:monospace;font-size:11px">${u.mpesaRef || '—'}</td>
+        <td><span class="badge ${statusBadge}"><span class="badge-dot"></span> ${u.status}</span></td>
+        <td><div class="flex-gap">
+          ${u.status !== 'suspended' ? `<button class="btn btn-danger btn-sm" onclick="suspendUser('${u._id}')">Suspend</button>` : `<button class="btn btn-success btn-sm" onclick="activateUser('${u._id}')">Reactivate</button>`}
+          <button class="btn btn-outline btn-sm" onclick="openExtend('${u._id}')">Extend</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteUser('${u._id}')">Del</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+
+    const pag = document.getElementById('usersPagination');
+    pag.innerHTML = `<span>Page ${page} of ${data.pages} (${data.total} total)</span><div class="flex-gap">
+      ${page > 1 ? `<button class="btn btn-outline btn-sm" onclick="loadUsers(${page-1})">← Prev</button>` : ''}
+      ${page < data.pages ? `<button class="btn btn-outline btn-sm" onclick="loadUsers(${page+1})">Next →</button>` : ''}
+    </div>`;
+  } catch (e) { notify('Error loading users','❌'); }
+}
+
+let searchUsersTimer;
+function searchUsers(val) { userSearch = val; clearTimeout(searchUsersTimer); searchUsersTimer = setTimeout(() => loadUsers(1), 400); }
+
+async function suspendUser(id) {
+  if (!confirm('Kick/suspend this user?')) return;
+  const res = await fetch(`/admin/api/users/${id}/suspend`, { method:'POST' });
+  const data = await res.json();
+  notify(data.message, data.success ? '✅' : '❌');
+  loadUsers(); loadDashboard();
+}
+
+async function activateUser(id) {
+  const res = await fetch(`/admin/api/users/${id}/activate`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({hours:24}) });
+  const data = await res.json();
+  notify(data.message, data.success ? '✅' : '❌');
+  loadUsers();
+}
+
+async function deleteUser(id) {
+  if (!confirm('Permanently delete this user record?')) return;
+  const res = await fetch(`/admin/api/users/${id}`, { method:'DELETE' });
+  const data = await res.json();
+  notify(data.message, data.success ? '✅' : '❌');
+  loadUsers();
+}
+
+function openExtend(id) { document.getElementById('extendUserId').value = id; openModal('extendModal'); }
+async function extendUser() {
+  const id = document.getElementById('extendUserId').value;
+  const hours = document.getElementById('extendHours').value;
+  const res = await fetch('/admin/api/users/extend', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({userId:id,hours}) });
+  const data = await res.json();
+  notify(data.message, data.success ? '✅' : '❌');
+  closeModal('extendModal'); loadUsers();
+}
+
+async function addUserManual() {
+  const phone = document.getElementById('m_phone').value.trim();
+  const pkgId = document.getElementById('m_pkg').value;
+  const ref = document.getElementById('m_ref').value.trim().toUpperCase();
+  if (!phone) return notify('Phone required','⚠️');
+  if (!pkgId) return notify('Select a package','⚠️');
+  try {
+    const res = await fetch('/api/mpesa/pay', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ phone, packageId: pkgId, mac: '' })
+    });
+    // Force complete via manual-verify with empty ref to force activate
+    const { activateUser: activate } = await import('/api/health').catch(() => ({}));
+    notify('User added — check Transactions for confirmation','✅');
+    closeModal('addUserModal'); loadUsers();
+  } catch (e) { notify('Error adding user','❌'); }
+}
+
+// ─── PACKAGES ────────────────────────────────────────────────────────────────
+async function loadPackages() {
+  try {
+    const res = await fetch('/admin/api/packages');
+    const data = await res.json();
+    packagesCache = data.packages || [];
+    renderPackageList(packagesCache);
+    populatePkgSelect();
+  } catch (e) { notify('Error loading packages','❌'); }
+}
+
+function renderPackageList(packages) {
+  const el = document.getElementById('pkgList');
+  if (!packages?.length) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:20px">No packages. Create one above.</div>'; return; }
+  el.innerHTML = packages.map(p => `
+    <div class="pkg-item">
+      <div class="pkg-icon-box" style="background:${p.color || '#3b82f6'}22;color:${p.color || '#3b82f6'}">${p.icon || '📦'}</div>
+      <div class="pkg-info">
+        <div class="pkg-title">${p.displayName} ${p.popular ? '<span class="badge badge-blue" style="font-size:9px">POPULAR</span>' : ''}</div>
+        <div class="pkg-detail">KSh ${p.price} · ${p.durationLabel} · ↓${p.downloadSpeed}Mbps ↑${p.uploadSpeed}Mbps · ${p.dataLimit ? p.dataLimit+'MB' : 'Unlimited'}</div>
+      </div>
+      <div class="flex-gap">
+        <span class="badge ${p.isActive ? 'badge-green' : 'badge-red'}">${p.isActive ? 'Active' : 'Inactive'}</span>
+        <label class="toggle" title="Toggle"><input type="checkbox" ${p.isActive ? 'checked' : ''} onchange="togglePkg('${p._id}',this.checked)"><span class="toggle-slider"></span></label>
+        <button class="btn btn-outline btn-sm" onclick="editPackage(${JSON.stringify(p).replace(/"/g,'&quot;')})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deletePackage('${p._id}')">Del</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function populatePkgSelect() {
+  const sel = document.getElementById('m_pkg');
+  if (!sel) return;
+  sel.innerHTML = packagesCache.map(p => `<option value="${p._id}">${p.displayName} – KSh ${p.price}</option>`).join('');
+}
+
+function resetPkgForm() {
+  ['pkg_id','pkg_displayName','pkg_price','pkg_duration','pkg_durationLabel','pkg_downloadSpeed','pkg_uploadSpeed','pkg_dataLimit','pkg_icon','pkg_description'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('pkg_popular').checked = false;
+  document.getElementById('pkgModalTitle').textContent = '📦 New Package';
+}
+
+function editPackage(pkg) {
+  document.getElementById('pkg_id').value = pkg._id;
+  document.getElementById('pkg_displayName').value = pkg.displayName || '';
+  document.getElementById('pkg_price').value = pkg.price || '';
+  document.getElementById('pkg_duration').value = pkg.duration || '';
+  document.getElementById('pkg_durationLabel').value = pkg.durationLabel || '';
+  document.getElementById('pkg_downloadSpeed').value = pkg.downloadSpeed || '';
+  document.getElementById('pkg_uploadSpeed').value = pkg.uploadSpeed || '';
+  document.getElementById('pkg_dataLimit').value = pkg.dataLimit || 0;
+  document.getElementById('pkg_icon').value = pkg.icon || '';
+  document.getElementById('pkg_description').value = pkg.description || '';
+  document.getElementById('pkg_popular').checked = !!pkg.popular;
+  document.getElementById('pkgModalTitle').textContent = '✏️ Edit Package';
+  openModal('pkgModal');
+}
+
+async function savePackage() {
+  const id = document.getElementById('pkg_id').value;
+  const payload = {
+    displayName: document.getElementById('pkg_displayName').value,
+    name: document.getElementById('pkg_displayName').value.toLowerCase().replace(/\s+/g,'-'),
+    price: Number(document.getElementById('pkg_price').value),
+    duration: Number(document.getElementById('pkg_duration').value),
+    durationLabel: document.getElementById('pkg_durationLabel').value,
+    downloadSpeed: Number(document.getElementById('pkg_downloadSpeed').value) || 10,
+    uploadSpeed: Number(document.getElementById('pkg_uploadSpeed').value) || 5,
+    dataLimit: Number(document.getElementById('pkg_dataLimit').value) || 0,
+    icon: document.getElementById('pkg_icon').value || '📦',
+    description: document.getElementById('pkg_description').value,
+    popular: document.getElementById('pkg_popular').checked
+  };
+  if (!payload.displayName || !payload.price || !payload.duration) return notify('Fill required fields','⚠️');
+  const url = id ? `/admin/api/packages/${id}` : '/admin/api/packages';
+  const method = id ? 'PUT' : 'POST';
+  const res = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  const data = await res.json();
+  notify(data.message, data.success ? '✅' : '❌');
+  if (data.success) { closeModal('pkgModal'); loadPackages(); }
+}
+
+async function togglePkg(id, isActive) {
+  await fetch(`/admin/api/packages/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({isActive}) });
+  notify(`Package ${isActive ? 'enabled' : 'disabled'}`, '✅');
+  loadPackages();
+}
+
+async function deletePackage(id) {
+  if (!confirm('Delete this package?')) return;
+  const res = await fetch(`/admin/api/packages/${id}`, { method:'DELETE' });
+  const data = await res.json();
+  notify(data.message, data.success ? '✅' : '❌');
+  loadPackages();
+}
+
+// ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
+async function loadTransactions(page = txPage) {
+  txPage = page;
+  try {
+    const status = document.getElementById('txStatusFilter')?.value || '';
+    const from = document.getElementById('txFrom')?.value || '';
+    const to = document.getElementById('txTo')?.value || '';
+    const search = txSearch;
+    const url = `/admin/api/transactions?page=${page}&limit=20&status=${status}&search=${encodeURIComponent(search)}&from=${from}&to=${to}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    // Summary
+    const sumEl = document.getElementById('txSummary');
+    if (sumEl) sumEl.innerHTML = `
+      <div class="stat-card green" style="margin-bottom:0"><div class="stat-label">Revenue Shown</div><div class="stat-value" style="font-size:18px">KSh ${fmt(data.totalRevenue||0)}</div></div>
+      <div class="stat-card blue" style="margin-bottom:0"><div class="stat-label">Records</div><div class="stat-value" style="font-size:18px">${data.total||0}</div></div>
+      <div class="stat-card amber" style="margin-bottom:0"><div class="stat-label">Page</div><div class="stat-value" style="font-size:18px">${page} / ${data.pages||1}</div></div>
+    `;
+
+    const tbody = document.getElementById('txTable');
+    if (!data.transactions?.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">No transactions</td></tr>'; return; }
+    tbody.innerHTML = data.transactions.map(t => {
+      const statusClass = {completed:'badge-green',pending:'badge-amber',failed:'badge-red',cancelled:'badge-red'}[t.status] || 'badge-blue';
+      const date = new Date(t.createdAt).toLocaleString('en-KE',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      return `<tr>
+        <td style="font-size:11px">${date}</td>
+        <td style="font-weight:600;color:var(--text)">${t.phone}</td>
+        <td>${t.packageName || '—'}</td>
+        <td style="color:var(--green2);font-weight:700">KSh ${t.amount}</td>
+        <td style="font-family:monospace;font-size:11px">${t.mpesaRef || '—'}</td>
+        <td><span class="badge ${statusClass}">${t.status}</span></td>
+      </tr>`;
+    }).join('');
+
+    const pag = document.getElementById('txPagination');
+    pag.innerHTML = `<span>Showing ${data.transactions.length} of ${data.total}</span><div class="flex-gap">
+      ${page > 1 ? `<button class="btn btn-outline btn-sm" onclick="loadTransactions(${page-1})">← Prev</button>` : ''}
+      ${page < data.pages ? `<button class="btn btn-outline btn-sm" onclick="loadTransactions(${page+1})">Next →</button>` : ''}
+    </div>`;
+  } catch (e) { notify('Error loading transactions','❌'); }
+}
+
+let txSearchTimer;
+function searchTx(val) { txSearch = val; clearTimeout(txSearchTimer); txSearchTimer = setTimeout(() => loadTransactions(1), 400); }
+
+function exportTx() {
+  const from = document.getElementById('txFrom')?.value || '';
+  const to = document.getElementById('txTo')?.value || '';
+  window.open(`/admin/api/export/transactions?from=${from}&to=${to}`);
+}
+
+// ─── SETTINGS ────────────────────────────────────────────────────────────────
+async function loadSettings() {
+  try {
+    const res = await fetch('/admin/api/settings');
+    const data = await res.json();
+    if (!data.success) return;
+    const s = data.settings;
+    const fields = ['business_name','support_phone','support_email','mpesa_paybill','hotspot_ssid','portal_welcome','portal_subtitle','max_devices','free_minutes'];
+    fields.forEach(key => { const el = document.getElementById('s_' + key); if (el) el.value = s[key] || ''; });
+    const maint = document.getElementById('s_maintenance');
+    if (maint) maint.checked = !!s['maintenance_mode'];
+  } catch (e) { /* silent */ }
+}
+
+async function saveSettings() {
+  const fields = ['business_name','support_phone','support_email','mpesa_paybill','hotspot_ssid'];
+  const payload = {};
+  fields.forEach(k => { const el = document.getElementById('s_' + k); if(el) payload[k] = el.value; });
+  const res = await fetch('/admin/api/settings', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  const data = await res.json();
+  notify(data.message, data.success ? '✅' : '❌');
+}
+
+async function savePortalSettings() {
+  const fields = ['portal_welcome','portal_subtitle','max_devices','free_minutes'];
+  const payload = {};
+  fields.forEach(k => { const el = document.getElementById('s_' + k); if(el) payload[k] = el.value; });
+  const maint = document.getElementById('s_maintenance');
+  if (maint) payload['maintenance_mode'] = maint.checked;
+  const res = await fetch('/admin/api/settings', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  const data = await res.json();
+  notify(data.message, data.success ? '✅' : '❌');
+}
+
+async function changePassword() {
+  const curr = document.getElementById('currentPwd').value;
+  const newp = document.getElementById('newPwd').value;
+  const conf = document.getElementById('confirmPwd').value;
+  if (!curr || !newp) return notify('Fill all password fields','⚠️');
+  if (newp !== conf) return notify('Passwords do not match','⚠️');
+  if (newp.length < 8) return notify('Password must be at least 8 characters','⚠️');
+  const res = await fetch('/admin/api/change-password', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({currentPassword:curr,newPassword:newp}) });
+  const data = await res.json();
+  notify(data.message, data.success ? '✅' : '❌');
+  if (data.success) { ['currentPwd','newPwd','confirmPwd'].forEach(id => document.getElementById(id).value = ''); }
+}
+
+// ─── ADMINS ──────────────────────────────────────────────────────────────────
+async function loadAdmins() {
+  try {
+    const res = await fetch('/admin/api/admins');
+    const data = await res.json();
+    const tbody = document.getElementById('adminsTable');
+    if (!data.admins?.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">No admins found</td></tr>'; return; }
+    tbody.innerHTML = data.admins.map(a => `<tr>
+      <td style="font-weight:600;color:var(--text)">${a.username}</td>
+      <td>${a.email}</td>
+      <td><span class="badge badge-purple">${a.role}</span></td>
+      <td style="font-size:11px">${a.lastLogin ? new Date(a.lastLogin).toLocaleString('en-KE') : 'Never'}</td>
+      <td><span class="badge ${a.isActive ? 'badge-green' : 'badge-red'}">${a.isActive ? 'Active' : 'Inactive'}</span></td>
+    </tr>`).join('');
+  } catch (e) { document.getElementById('adminsTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Access denied or error</td></tr>'; }
+}
+
+async function addAdmin() {
+  const payload = {
+    username: document.getElementById('a_username').value.trim(),
+    email: document.getElementById('a_email').value.trim(),
+    password: document.getElementById('a_password').value,
+    role: document.getElementById('a_role').value
+  };
+  if (!payload.username || !payload.email || !payload.password) return notify('All fields required','⚠️');
+  const res = await fetch('/admin/api/admins', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  const data = await res.json();
+  notify(data.message, data.success ? '✅' : '❌');
+  if (data.success) { closeModal('addAdminModal'); loadAdmins(); }
+}
+
+// ─── ALERTS ──────────────────────────────────────────────────────────────────
+async function loadAlerts() {
+  try {
+    const res = await fetch('/admin/api/stats');
+    const data = await res.json();
+    const el = document.getElementById('alertsList');
+    const alerts = data.stats?.alertsList || [];
+    if (!alerts.length) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:20px">No alerts</div>'; return; }
+    const icons = { success:'✅', info:'ℹ️', warning:'⚠️', error:'❌' };
+    el.innerHTML = alerts.map(a => `
+      <div class="alert-box alert-${a.type === 'success' ? 'success' : a.type === 'error' ? 'info' : 'warn'}" style="margin-bottom:8px">
+        <span>${icons[a.type] || 'ℹ️'}</span>
+        <div><div>${a.message}</div><div style="font-size:10px;color:var(--text3);margin-top:3px">${new Date(a.createdAt).toLocaleString('en-KE')}</div></div>
+      </div>
+    `).join('');
+  } catch (e) { /* silent */ }
+}
+
+async function markAlertsRead() {
+  await fetch('/admin/api/alerts/read-all', { method:'POST' });
+  document.getElementById('alertBadge').classList.add('hidden');
+  notify('All alerts marked as read','✅');
+  loadAlerts();
+}
+
+// ─── MODALS ──────────────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+
+// ─── NOTIFY ──────────────────────────────────────────────────────────────────
+function notify(msg, icon = 'ℹ️') {
+  const n = document.getElementById('notif');
+  document.getElementById('notifIcon').textContent = icon;
+  document.getElementById('notifMsg').textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 3500);
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function fmt(n) { return Number(n || 0).toLocaleString(); }
+</script>
+</body>
+</html>

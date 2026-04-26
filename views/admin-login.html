@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daggynet Admin – Login</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f172a;
+    background-image: radial-gradient(ellipse at 30% 40%, rgba(37,99,235,0.15) 0%, transparent 60%),
+                      radial-gradient(ellipse at 70% 70%, rgba(124,58,237,0.1) 0%, transparent 50%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f1f5f9;
+  }
+  .login-box {
+    background: rgba(30,41,59,0.95);
+    border: 1px solid rgba(148,163,184,0.15);
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 400px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .logo { text-align: center; margin-bottom: 30px; }
+  .logo-icon {
+    width: 60px; height: 60px; border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 12px;
+    box-shadow: 0 0 30px rgba(37,99,235,0.4);
+  }
+  .logo-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo-sub { font-size: 13px; color: #64748b; margin-top: 4px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; font-weight: 600; color: #94a3b8; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-input {
+    width: 100%; padding: 13px 16px; background: rgba(0,0,0,0.3);
+    border: 1.5px solid rgba(148,163,184,0.2); border-radius: 10px;
+    color: #f1f5f9; font-size: 15px; outline: none; transition: all 0.2s; font-family: inherit;
+  }
+  .form-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+  .form-input::placeholder { color: #475569; }
+  .btn-login {
+    width: 100%; padding: 14px; background: linear-gradient(135deg, #2563eb, #7c3aed);
+    border: none; border-radius: 10px; color: #fff; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; font-family: inherit; margin-top: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-login:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 25px rgba(37,99,235,0.4); }
+  .btn-login:active { transform: scale(0.98); }
+  .btn-login:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .error-msg { background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #fca5a5; margin-bottom: 16px; display: none; }
+  .footer-note { text-align: center; margin-top: 20px; font-size: 11px; color: #475569; }
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .pass-wrap { position: relative; }
+  .pass-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px; }
+  .security-badge { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; color: #475569; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="login-box">
+  <div class="logo">
+    <div class="logo-icon">📡</div>
+    <div class="logo-title">Daggynet Admin</div>
+    <div class="logo-sub">Hotspot Management Dashboard</div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div class="form-group">
+    <label class="form-label">Username</label>
+    <input type="text" id="username" class="form-input" placeholder="Enter username" autocomplete="username">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Password</label>
+    <div class="pass-wrap">
+      <input type="password" id="password" class="form-input" placeholder="Enter password" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter') login()">
+      <span class="pass-toggle" onclick="togglePass()">👁️</span>
+    </div>
+  </div>
+
+  <button class="btn-login" id="loginBtn" onclick="login()">
+    🔐 Sign In to Dashboard
+  </button>
+
+  <div class="security-badge">
+    🔒 Secured · Admin access only
+  </div>
+
+  <div class="footer-note">
+    Daggynet Hotspot · <a href="/" style="color:#3b82f6">Back to Portal</a>
+  </div>
+</div>
+
+<script>
+async function login() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const errorEl = document.getElementById('errorMsg');
+  const btn = document.getElementById('loginBtn');
+
+  if (!username || !password) {
+    errorEl.textContent = 'Please enter username and password';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Signing in...';
+  errorEl.style.display = 'none';
+
+  try {
+    const res = await fetch('/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (data.success) {
+      window.location.href = data.redirect || '/admin/dashboard';
+    } else {
+      errorEl.textContent = data.message || 'Invalid credentials';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '🔐 Sign In to Dashboard';
+    }
+  } catch (e) {
+    errorEl.textContent = 'Connection error. Please try again.';
+    errorEl.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '🔐 Sign In to Dashboard';
+  }
+}
+
+function togglePass() {
+  const inp = document.getElementById('password');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+</script>
+</body>
+</html>
