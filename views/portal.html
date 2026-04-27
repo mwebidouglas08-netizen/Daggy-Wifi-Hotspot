@@ -2,789 +2,770 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Daggynet Hotspot – Connect to WiFi</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daggynet Hotspot</title>
 <style>
-  :root {
-    --primary:#2563eb;--primary-light:#3b82f6;--primary-glow:rgba(37,99,235,0.28);
-    --success:#059669;--success-light:#10b981;
-    --danger:#dc2626;--danger-light:#ef4444;
-    --warning:#d97706;--warning-light:#f59e0b;
-    --bg:#0f172a;--bg2:#1e293b;--bg3:#334155;
-    --card:rgba(30,41,59,0.97);
-    --border:rgba(148,163,184,0.12);--border2:rgba(148,163,184,0.22);
-    --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
-    --radius:16px;--radius2:10px;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  html,body{min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
-  body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f172a;color:#f1f5f9;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
 
-  /* HEADER */
-  .header{background:rgba(15,23,42,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-  .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-  .logo-icon{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--primary),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 18px var(--primary-glow);flex-shrink:0;}
-  .logo-text{font-size:17px;font-weight:800;letter-spacing:-0.5px;}
-  .logo-text span{color:var(--primary-light);}
-  .header-status{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--success-light);flex-shrink:0;}
-  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--success-light);animation:pdot 2s infinite;}
-  @keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+/* HEADER */
+.hdr{background:rgba(15,23,42,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(148,163,184,.12);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-ic{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:17px}
+.logo-nm{font-size:16px;font-weight:800}.logo-nm b{color:#60a5fa}
+.online{display:flex;align-items:center;gap:5px;font-size:11px;color:#34d399}
+.dot{width:7px;height:7px;border-radius:50%;background:#34d399;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 
-  /* HERO BANNER */
-  .hero-banner{position:relative;width:100%;height:230px;overflow:hidden;flex-shrink:0;}
-  .hero-banner img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
-  .hero-banner-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,18,40,.3) 0%,rgba(10,18,40,.6) 55%,rgba(15,23,42,1) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;}
-  .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(37,99,235,.3);border:1px solid rgba(59,130,246,.5);border-radius:30px;padding:4px 14px;font-size:10px;font-weight:800;color:#93c5fd;letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;backdrop-filter:blur(8px);}
-  .hero-title{font-size:27px;font-weight:900;letter-spacing:-.8px;line-height:1.15;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.5);margin-bottom:6px;}
-  .hero-title span{background:linear-gradient(135deg,#60a5fa,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-  .hero-sub{font-size:13px;color:rgba(241,245,249,.82);text-shadow:0 1px 8px rgba(0,0,0,.5);}
-  .hero-stats{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center;}
-  .hero-stat-pill{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(6px);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:#fff;}
+/* HERO */
+.hero{position:relative;height:210px;overflow:hidden;flex-shrink:0}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,15,35,.25) 0%,rgba(10,15,35,.65) 55%,#0f172a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center}
+.hero-tag{background:rgba(37,99,235,.35);border:1px solid rgba(96,165,250,.5);border-radius:20px;padding:3px 12px;font-size:10px;font-weight:700;color:#93c5fd;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.hero-h1{font-size:26px;font-weight:900;color:#fff;letter-spacing:-.5px;text-shadow:0 2px 12px rgba(0,0,0,.6);margin-bottom:5px}
+.hero-h1 span{background:linear-gradient(135deg,#60a5fa,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-p{font-size:12px;color:rgba(255,255,255,.78)}
+.pills{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;justify-content:center}
+.pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:600;color:#fff}
 
-  /* CONTAINER */
-  .container{max-width:480px;margin:0 auto;padding:18px 16px 40px;flex:1;width:100%;}
+/* CONTAINER */
+.wrap{max-width:460px;margin:0 auto;padding:16px 14px 50px;flex:1;width:100%}
 
-  /* TABS */
-  .tabs{display:flex;gap:4px;background:rgba(0,0,0,.35);border-radius:var(--radius2);padding:4px;margin-bottom:18px;}
-  .tab-btn{flex:1;padding:10px 6px;border:none;background:transparent;color:var(--text2);font-size:13px;font-weight:500;border-radius:8px;cursor:pointer;transition:all .2s;font-family:inherit;-webkit-tap-highlight-color:transparent;}
-  .tab-btn.active{background:var(--bg2);color:var(--text);font-weight:700;box-shadow:0 1px 6px rgba(0,0,0,.3);}
+/* TAB NAV */
+.tab-nav{display:flex;gap:3px;background:rgba(0,0,0,.4);border-radius:10px;padding:4px;margin-bottom:16px}
+.tab-nav button{flex:1;padding:9px 4px;border:none;background:transparent;color:#94a3b8;font-size:12px;font-weight:600;border-radius:7px;cursor:pointer;font-family:inherit;transition:all .18s}
+.tab-nav button.on{background:#1e293b;color:#f1f5f9;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 
-  /* STEPS */
-  .steps{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:18px;}
-  .step{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);transition:color .2s;}
-  .step.active{color:var(--primary-light);}
-  .step.done{color:var(--success-light);}
-  .step-num{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;}
-  .step-line{width:26px;height:1px;background:var(--border);flex-shrink:0;}
+/* STEPS */
+.steps{display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:16px}
+.stp{display:flex;align-items:center;gap:4px;font-size:11px;color:#4b5563;transition:color .2s}
+.stp.on{color:#60a5fa}.stp.done{color:#34d399}
+.stp-n{width:20px;height:20px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.stp-ln{width:24px;height:1px;background:rgba(148,163,184,.18);flex-shrink:0}
 
-  /* CARD */
-  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
-  .card-title{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+/* CARD */
+.card{background:rgba(30,41,59,.97);border:1px solid rgba(148,163,184,.12);border-radius:14px;padding:18px;margin-bottom:12px}
+.card-ttl{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
 
-  /* PACKAGES */
-  .packages-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
-  .pkg-card{border:2px solid var(--border);border-radius:var(--radius2);padding:14px 10px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;background:rgba(0,0,0,.25);text-align:center;-webkit-tap-highlight-color:transparent;user-select:none;}
-  .pkg-card:hover{border-color:var(--primary-light);transform:translateY(-2px);}
-  .pkg-card:active{transform:scale(.97);}
-  .pkg-card.selected{border-color:var(--primary);background:rgba(37,99,235,.14);box-shadow:0 0 20px var(--primary-glow);}
-  .pkg-popular{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;font-size:9px;font-weight:800;padding:2px 10px;border-radius:20px;white-space:nowrap;text-transform:uppercase;}
-  .pkg-icon{font-size:20px;margin-bottom:4px;display:block;}
-  .pkg-name{font-size:13px;font-weight:700;margin-bottom:2px;}
-  .pkg-duration{font-size:10px;color:var(--text3);margin-bottom:6px;}
-  .pkg-price{font-size:21px;font-weight:900;letter-spacing:-.5px;}
-  .pkg-price small{font-size:11px;font-weight:400;color:var(--text2);}
-  .pkg-speed{font-size:10px;color:var(--text3);margin-top:4px;}
+/* PACKAGES */
+.pkgs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:4px}
+.pkg{border:2px solid rgba(148,163,184,.15);border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;background:rgba(0,0,0,.22);position:relative;transition:border-color .2s,transform .15s,box-shadow .2s;user-select:none}
+.pkg:hover{border-color:#60a5fa;transform:translateY(-2px)}
+.pkg:active{transform:scale(.96)}
+.pkg.sel{border-color:#2563eb;background:rgba(37,99,235,.14);box-shadow:0 0 16px rgba(37,99,235,.3)}
+.pkg-pop{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#2563eb;color:#fff;font-size:9px;font-weight:800;padding:2px 9px;border-radius:20px;white-space:nowrap;text-transform:uppercase}
+.pkg-ic{font-size:18px;margin-bottom:3px;display:block}
+.pkg-nm{font-size:12px;font-weight:700;margin-bottom:1px}
+.pkg-dur{font-size:10px;color:#64748b;margin-bottom:5px}
+.pkg-pr{font-size:19px;font-weight:900;letter-spacing:-.5px}
+.pkg-pr small{font-size:10px;font-weight:400;color:#94a3b8}
+.pkg-sp{font-size:10px;color:#4b5563;margin-top:3px}
 
-  /* FORM */
-  .form-group{margin-bottom:14px;}
-  .form-label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
-  .form-input{width:100%;padding:12px 14px;background:rgba(0,0,0,.3);border:1.5px solid var(--border2);border-radius:var(--radius2);color:var(--text);font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;-webkit-appearance:none;appearance:none;}
-  .form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);background:rgba(0,0,0,.4);}
-  .form-input::placeholder{color:var(--text3);}
-  .phone-wrap{position:relative;}
-  .phone-prefix{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:14px;pointer-events:none;z-index:1;}
-  .phone-input{padding-left:40px !important;}
+/* FORM */
+.fg{margin-bottom:13px}
+.fl{display:block;font-size:11px;font-weight:700;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.fi{width:100%;padding:11px 13px;background:rgba(0,0,0,.3);border:1.5px solid rgba(148,163,184,.22);border-radius:9px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.fi:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.2)}
+.fi::placeholder{color:#475569}
+.ph-wrap{position:relative}
+.ph-pfx{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;pointer-events:none;z-index:1}
+.ph-in{padding-left:38px !important}
 
-  /* BUTTONS — the key fix: no width:100% by default */
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:13px 18px;border:none;border-radius:var(--radius2);font-size:14px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .15s,box-shadow .15s;font-family:inherit;text-decoration:none;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;white-space:nowrap;line-height:1.2;}
-  .btn:active:not(:disabled){transform:scale(.97);}
-  .btn:disabled{opacity:.45;cursor:not-allowed !important;transform:none !important;}
-  /* Full width modifier */
-  .btn-block{width:100%;display:flex;}
-  /* Buttons inside a row share space equally */
-  .btn-row{display:flex;gap:10px;margin-top:4px;}
-  .btn-row .btn{flex:1;padding:11px 8px;font-size:13px;}
-  /* Spacing helpers */
-  .mt-8{margin-top:8px;}
-  .mt-14{margin-top:14px;}
-  .mb-14{margin-bottom:14px;}
-  /* Color variants */
-  .btn-primary{background:linear-gradient(135deg,var(--primary),#7c3aed);color:#fff;box-shadow:0 4px 18px var(--primary-glow);}
-  .btn-primary:hover:not(:disabled){opacity:.9;box-shadow:0 6px 24px var(--primary-glow);}
-  .btn-success{background:linear-gradient(135deg,var(--success),#0d9488);color:#fff;box-shadow:0 4px 18px rgba(5,150,105,.3);}
-  .btn-success:hover:not(:disabled){opacity:.9;}
-  .btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--text2);}
-  .btn-outline:hover:not(:disabled){border-color:var(--primary-light);color:var(--text);background:rgba(59,130,246,.06);}
-  .btn-danger{background:rgba(220,38,38,.15);border:1.5px solid rgba(220,38,38,.35);color:var(--danger-light);}
-  .btn-danger:hover:not(:disabled){background:rgba(220,38,38,.25);}
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s,transform .12s;white-space:nowrap;line-height:1}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;pointer-events:none}
+.btn+.btn{margin-top:8px}
+.btn-blue{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;box-shadow:0 4px 16px rgba(37,99,235,.3)}
+.btn-blue:hover{opacity:.92}
+.btn-green{background:linear-gradient(135deg,#059669,#0d9488);color:#fff;box-shadow:0 4px 16px rgba(5,150,105,.3)}
+.btn-green:hover{opacity:.92}
+.btn-ghost{background:transparent;border:1.5px solid rgba(148,163,184,.25);color:#94a3b8}
+.btn-ghost:hover{border-color:#60a5fa;color:#f1f5f9;background:rgba(59,130,246,.07)}
+.btn-red{background:rgba(220,38,38,.14);border:1.5px solid rgba(220,38,38,.3);color:#f87171}
+.btn-red:hover{background:rgba(220,38,38,.25)}
+/* Two buttons side by side */
+.btn-row{display:flex;gap:8px}
+.btn-row .btn{margin-top:0}
 
-  /* SPINNER */
-  .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;display:inline-block;}
-  @keyframes spin{to{transform:rotate(360deg)}}
+/* ALERT */
+.al{padding:11px 13px;border-radius:9px;font-size:13px;margin-bottom:11px;border-left:3px solid;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.al-i{background:rgba(37,99,235,.1);border-color:#2563eb;color:#93c5fd}
+.al-s{background:rgba(5,150,105,.1);border-color:#059669;color:#6ee7b7}
+.al-w{background:rgba(217,119,6,.1);border-color:#d97706;color:#fcd34d}
+.al-e{background:rgba(220,38,38,.1);border-color:#dc2626;color:#fca5a5}
+.al-ic{flex-shrink:0;font-size:14px}
 
-  /* ALERT */
-  .alert{padding:12px 14px;border-radius:var(--radius2);font-size:13px;margin-bottom:12px;border-left:3px solid;display:flex;align-items:flex-start;gap:9px;line-height:1.5;}
-  .alert-info{background:rgba(37,99,235,.1);border-color:var(--primary);color:#93c5fd;}
-  .alert-success{background:rgba(5,150,105,.1);border-color:var(--success);color:#6ee7b7;}
-  .alert-warning{background:rgba(217,119,6,.1);border-color:var(--warning);color:#fcd34d;}
-  .alert-danger{background:rgba(220,38,38,.1);border-color:var(--danger);color:#fca5a5;}
-  .alert-icon{font-size:15px;flex-shrink:0;}
+/* WAITING */
+.wait{text-align:center;padding:8px 0}
+.wait-ic{font-size:52px;display:block;margin-bottom:10px;animation:bob 1.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.wait h3{font-size:17px;font-weight:800;margin-bottom:6px}
+.wait p{font-size:13px;color:#94a3b8;line-height:1.5;margin-bottom:13px}
+.timer{font-size:36px;font-weight:900;color:#60a5fa;margin-bottom:3px;font-variant-numeric:tabular-nums}
+.timer-l{font-size:11px;color:#4b5563;margin-bottom:14px}
+.details{background:rgba(0,0,0,.28);border-radius:9px;padding:11px 13px;text-align:left;margin-bottom:14px}
+.drow{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+.drow span:first-child{color:#4b5563}
+.drow span:last-child{font-weight:600}
 
-  /* PAYMENT WAITING */
-  .payment-waiting{text-align:center;padding:6px 0;}
-  .payment-phone-icon{font-size:56px;margin-bottom:10px;animation:bounce 1.5s ease-in-out infinite;display:block;}
-  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-  .payment-waiting h3{font-size:17px;font-weight:800;margin-bottom:6px;}
-  .payment-waiting p{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5;}
-  .timer-ring{font-size:38px;font-weight:900;color:var(--primary-light);margin-bottom:4px;font-variant-numeric:tabular-nums;}
-  .timer-label{font-size:11px;color:var(--text3);margin-bottom:16px;}
-  .pay-details{background:rgba(0,0,0,.28);border-radius:var(--radius2);padding:12px 14px;text-align:left;margin-bottom:16px;}
-  .pay-detail-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:3px 0;}
-  .pay-detail-row span:first-child{color:var(--text3);}
-  .pay-detail-row span:last-child{font-weight:600;}
+/* SUCCESS */
+.succ{text-align:center;padding:10px 0}
+.succ-ic{font-size:60px;display:block;margin-bottom:10px;animation:pop .5s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.succ h2{font-size:22px;font-weight:900;color:#34d399;margin-bottom:6px}
+.succ p{font-size:13px;color:#94a3b8;margin-bottom:16px}
+.sess{background:rgba(5,150,105,.1);border:1px solid rgba(5,150,105,.26);border-radius:9px;padding:13px;margin-bottom:13px;text-align:left}
+.srow{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.srow span:first-child{color:#4b5563}
+.srow span:last-child{font-weight:700;color:#34d399}
 
-  /* SUCCESS */
-  .success-screen{text-align:center;padding:10px 0;}
-  .success-icon{font-size:64px;margin-bottom:10px;animation:pop .5s cubic-bezier(.175,.885,.32,1.275);display:block;}
-  @keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
-  .success-screen h2{font-size:22px;font-weight:900;margin-bottom:7px;color:var(--success-light);}
-  .success-screen>p{font-size:13px;color:var(--text2);margin-bottom:18px;}
-  .session-info{background:rgba(5,150,105,.1);border:1px solid rgba(5,150,105,.28);border-radius:var(--radius2);padding:14px;margin-bottom:14px;text-align:left;}
-  .session-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;}
-  .session-row span:first-child{color:var(--text3);}
-  .session-row span:last-child{font-weight:700;color:var(--success-light);}
-  .countdown-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:10px;}
-  .countdown-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--success),var(--success-light));width:100%;}
+/* SUPPORT */
+.sup-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sup-card{background:rgba(0,0,0,.2);border:1px solid rgba(148,163,184,.12);border-radius:10px;padding:13px;text-align:center;display:block;color:#f1f5f9;transition:border-color .2s,transform .15s;cursor:pointer}
+.sup-card:hover{border-color:#60a5fa;transform:translateY(-2px)}
+.sup-card-ic{font-size:20px;margin-bottom:5px;display:block}
+.sup-card-l{font-size:10px;color:#4b5563;text-transform:uppercase;letter-spacing:.5px;margin-bottom:1px}
+.sup-card-v{font-size:12px;font-weight:600}
 
-  /* RECONNECT */
-  .scan-area{border:2px dashed var(--border2);border-radius:var(--radius2);padding:18px;text-align:center;margin-bottom:14px;cursor:pointer;transition:border-color .2s,background .2s;-webkit-tap-highlight-color:transparent;}
-  .scan-area:hover{border-color:var(--primary-light);background:rgba(59,130,246,.04);}
-  .scan-icon{font-size:28px;margin-bottom:6px;display:block;}
-  .scan-text{font-size:12px;color:var(--text2);}
+/* ACCORDION */
+.acc{margin-bottom:6px}
+.acc-h{padding:11px 13px;background:rgba(0,0,0,.2);border:1px solid rgba(148,163,184,.12);border-radius:9px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;user-select:none;transition:background .15s}
+.acc-h:hover{background:rgba(255,255,255,.04)}
+.acc-h.op{border-radius:9px 9px 0 0;border-bottom-color:transparent}
+.acc-arr{font-size:10px;transition:transform .22s;margin-left:8px;flex-shrink:0}
+.acc-h.op .acc-arr{transform:rotate(180deg)}
+.acc-b{display:none;padding:11px 13px;background:rgba(0,0,0,.1);border:1px solid rgba(148,163,184,.12);border-top:none;border-radius:0 0 9px 9px;font-size:13px;color:#94a3b8;line-height:1.7}
+.acc-b.op{display:block}
+.acc-b ul{padding-left:16px}
 
-  /* SUPPORT */
-  .support-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-  .support-card{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:var(--radius2);padding:14px;text-align:center;text-decoration:none;color:var(--text);transition:border-color .2s,transform .2s;display:block;-webkit-tap-highlight-color:transparent;}
-  .support-card:hover{border-color:var(--primary-light);transform:translateY(-2px);}
-  .support-card-icon{font-size:22px;margin-bottom:6px;display:block;}
-  .support-card-label{font-size:10px;color:var(--text3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px;}
-  .support-card-value{font-size:12px;font-weight:600;}
+/* SCAN AREA */
+.scan{border:2px dashed rgba(148,163,184,.25);border-radius:9px;padding:16px;text-align:center;margin-bottom:13px;cursor:pointer;transition:border-color .2s,background .15s}
+.scan:hover{border-color:#60a5fa;background:rgba(59,130,246,.05)}
+.scan-ic{font-size:26px;display:block;margin-bottom:5px}
+.scan-t{font-size:12px;color:#64748b}
 
-  /* ACCORDION */
-  .info-accordion{margin-bottom:0;}
-  .info-accordion+.info-accordion{margin-top:6px;}
-  .info-header{padding:12px 14px;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:var(--radius2);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;transition:all .2s;-webkit-tap-highlight-color:transparent;user-select:none;}
-  .info-header:hover{border-color:var(--border2);background:rgba(255,255,255,.03);}
-  .info-header .arrow{transition:transform .25s;font-size:11px;flex-shrink:0;margin-left:8px;}
-  .info-header.open .arrow{transform:rotate(180deg);}
-  .info-header.open{border-radius:var(--radius2) var(--radius2) 0 0;border-bottom-color:transparent;}
-  .info-body{display:none;padding:12px 14px;background:rgba(0,0,0,.12);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius2) var(--radius2);font-size:13px;color:var(--text2);line-height:1.7;}
-  .info-body.open{display:block;}
-  .info-body ul{padding-left:16px;}
+/* DIVIDER */
+.divider{position:relative;text-align:center;font-size:11px;color:#4b5563;margin:13px 0}
+.divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(148,163,184,.14)}
+.divider span{position:relative;z-index:1;background:rgba(30,41,59,.97);padding:0 11px}
 
-  /* OR DIVIDER */
-  .or-divider{position:relative;text-align:center;font-size:11px;color:var(--text3);margin:14px 0;}
-  .or-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border);}
-  .or-divider span{position:relative;z-index:1;background:var(--card);padding:0 12px;}
+/* NET INFO */
+.net-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#94a3b8;border-bottom:1px solid rgba(148,163,184,.1)}
+.net-row:last-child{border-bottom:none}
+.net-row strong{color:#f1f5f9}
 
-  /* HIDDEN / SECTIONS */
-  .hidden{display:none !important;}
-  .section{display:none;}
-  .section.active{display:block;}
+/* TOAST */
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(120px);background:#1e293b;border:1px solid rgba(148,163,184,.22);border-radius:50px;padding:10px 18px;font-size:13px;font-weight:500;z-index:999;transition:transform .3s cubic-bezier(.175,.885,.32,1.275);white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.5);color:#f1f5f9;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
 
-  /* FOOTER */
-  .footer{text-align:center;padding:18px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);margin-top:auto;}
-  .footer a{color:var(--primary-light);text-decoration:none;}
+/* FOOTER */
+.foot{text-align:center;padding:16px;font-size:11px;color:#4b5563;border-top:1px solid rgba(148,163,184,.1)}
+.foot a{color:#60a5fa}
 
-  /* TOAST */
-  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--bg2);border:1px solid var(--border2);border-radius:50px;padding:11px 20px;font-size:13px;font-weight:500;z-index:999;transition:transform .35s cubic-bezier(.175,.885,.32,1.275);white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.5);color:var(--text);pointer-events:none;}
-  .toast.show{transform:translateX(-50%) translateY(0);}
+/* SPINNER */
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:ro .7s linear infinite;flex-shrink:0}
+@keyframes ro{to{transform:rotate(360deg)}}
 
-  @media(max-width:380px){
-    .packages-grid{grid-template-columns:1fr;}
-    .support-grid{grid-template-columns:1fr;}
-    .hero-banner{height:195px;}
-    .hero-title{font-size:22px;}
-  }
+/* HIDDEN / VISIBLE */
+.hide{display:none !important}
+.tab-pane{display:none}
+.tab-pane.on{display:block}
+
+@media(max-width:360px){.pkgs{grid-template-columns:1fr}.sup-grid{grid-template-columns:1fr}.hero{height:185px}.hero-h1{font-size:22px}}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
-<header class="header">
-  <a class="logo" href="/">
-    <div class="logo-icon">📡</div>
-    <div class="logo-text">Daggy<span>net</span></div>
-  </a>
-  <div class="header-status">
-    <div class="status-dot"></div>
-    WiFi Online
+<div class="hdr">
+  <div class="logo">
+    <div class="logo-ic">📡</div>
+    <div class="logo-nm">Daggy<b>net</b></div>
   </div>
-</header>
+  <div class="online"><div class="dot"></div>WiFi Online</div>
+</div>
 
-<!-- HERO BANNER WITH HD IMAGE -->
-<div class="hero-banner">
-  <img
-    src="https://images.unsplash.com/photo-1516321165247-4aa89a48be28?w=900&q=85&auto=format&fit=crop&crop=center"
-    alt="Daggynet WiFi Hotspot"
-    onerror="this.style.display='none'"
-    loading="eager"
-  >
-  <div class="hero-banner-overlay">
-    <div class="hero-badge">📡 Daggynet Hotspot</div>
-    <h1 class="hero-title" id="heroTitle">Welcome to <span>Daggynet</span></h1>
-    <p class="hero-sub" id="heroSub">Fast &amp; Reliable Internet Access</p>
-    <div class="hero-stats">
-      <div class="hero-stat-pill">⚡ Up to 20 Mbps</div>
-      <div class="hero-stat-pill">🔒 Secure</div>
-      <div class="hero-stat-pill">📱 M-Pesa</div>
+<!-- HERO BANNER -->
+<div class="hero">
+  <img src="https://images.unsplash.com/photo-1516321165247-4aa89a48be28?w=900&q=80&auto=format&fit=crop" alt="WiFi" onerror="this.style.display='none'">
+  <div class="hero-ov">
+    <div class="hero-tag">📡 Daggynet Hotspot</div>
+    <div class="hero-h1" id="heroTitle">Welcome to <span>Daggynet</span></div>
+    <div class="hero-p" id="heroSub">Fast &amp; Reliable Internet Access</div>
+    <div class="pills">
+      <div class="pill">⚡ Up to 20 Mbps</div>
+      <div class="pill">🔒 Secure</div>
+      <div class="pill">📱 M-Pesa</div>
     </div>
   </div>
 </div>
 
-<!-- MAIN CONTAINER -->
-<div class="container">
+<!-- MAIN -->
+<div class="wrap">
 
   <!-- STEP INDICATOR -->
-  <div class="steps" id="stepIndicator">
-    <div class="step active" id="step1"><div class="step-num">1</div><span>Choose</span></div>
-    <div class="step-line"></div>
-    <div class="step" id="step2"><div class="step-num">2</div><span>Pay</span></div>
-    <div class="step-line"></div>
-    <div class="step" id="step3"><div class="step-num">3</div><span>Connect</span></div>
+  <div class="steps" id="stepsEl">
+    <div class="stp on" id="stp1"><div class="stp-n">1</div><span>Choose</span></div>
+    <div class="stp-ln"></div>
+    <div class="stp" id="stp2"><div class="stp-n">2</div><span>Pay</span></div>
+    <div class="stp-ln"></div>
+    <div class="stp" id="stp3"><div class="stp-n">3</div><span>Connect</span></div>
   </div>
 
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('connect',this)" type="button">🌐 Connect</button>
-    <button class="tab-btn" onclick="switchTab('reconnect',this)" type="button">🔄 Reconnect</button>
-    <button class="tab-btn" onclick="switchTab('support',this)" type="button">💬 Support</button>
+  <!-- TAB NAV -->
+  <div class="tab-nav">
+    <button id="tnConnect" class="on" onclick="openTab('connect')">🌐 Connect</button>
+    <button id="tnReconnect" onclick="openTab('reconnect')">🔄 Reconnect</button>
+    <button id="tnSupport" onclick="openTab('support')">💬 Support</button>
   </div>
 
-  <!-- ═══ CONNECT TAB ═══ -->
-  <div class="section active" id="tab-connect">
+  <!-- ══════════════════════════════════════ -->
+  <!-- CONNECT TAB                           -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="tab-pane on" id="paneConnect">
 
-    <!-- STEP 1: PACKAGES -->
-    <div id="sectionPackages">
+    <!-- Step 1: Packages -->
+    <div id="secPkgs">
       <div class="card">
-        <div class="card-title">📦 Choose Your Package</div>
-        <div class="packages-grid" id="packagesGrid">
-          <div style="grid-column:1/-1;text-align:center;padding:28px;color:var(--text3);">
-            <div class="spinner" style="margin:0 auto 12px;border-color:rgba(255,255,255,.15);border-top-color:var(--primary-light);"></div>
-            Loading packages...
+        <div class="card-ttl">📦 Choose a Package</div>
+        <div class="pkgs" id="pkgGrid">
+          <div style="grid-column:1/-1;text-align:center;padding:22px;color:#4b5563">
+            <div class="spin" style="margin:0 auto 10px;border-top-color:#60a5fa"></div>Loading...
           </div>
         </div>
       </div>
-      <div id="pkgAlert" class="hidden"></div>
-      <button class="btn btn-primary btn-block" id="btnContinue" onclick="proceedToPayment()" type="button" disabled>
-        Continue to Payment →
-      </button>
+      <div id="pkgMsg" class="hide"></div>
+      <button class="btn btn-blue" id="btnContinue" onclick="gotoPayment()" disabled>Continue to Payment →</button>
     </div>
 
-    <!-- STEP 2: PAYMENT -->
-    <div id="sectionPayment" class="hidden">
+    <!-- Step 2: Payment -->
+    <div id="secPay" class="hide">
       <div class="card">
-        <div class="card-title">📱 M-Pesa Payment</div>
-        <div id="selectedPkgSummary" class="pay-details" style="margin-bottom:14px;"></div>
-        <div class="form-group">
-          <label class="form-label">Your M-Pesa Phone Number</label>
-          <div class="phone-wrap">
-            <span class="phone-prefix">🇰🇪</span>
-            <input type="tel" id="phoneInput" class="form-input phone-input" placeholder="07XX XXX XXX" maxlength="13" inputmode="numeric">
+        <div class="card-ttl">📱 M-Pesa Payment</div>
+        <div id="pkgSummary" class="details" style="margin-bottom:13px"></div>
+        <div class="fg">
+          <label class="fl">M-Pesa Phone Number</label>
+          <div class="ph-wrap">
+            <span class="ph-pfx">🇰🇪</span>
+            <input type="tel" id="phoneIn" class="fi ph-in" placeholder="07XX XXX XXX" maxlength="13" inputmode="numeric">
           </div>
         </div>
-        <div id="payAlert" class="hidden"></div>
-        <button class="btn btn-primary btn-block" id="btnPay" onclick="initiatePayment()" type="button">
-          💳 Pay via M-Pesa STK Push
-        </button>
-        <button class="btn btn-outline btn-block mt-8" onclick="backToPackages()" type="button">
-          ← Back to Packages
-        </button>
+        <div id="payMsg" class="hide"></div>
+        <button class="btn btn-blue" id="btnPay" onclick="doPay()">💳 Pay via M-Pesa STK Push</button>
+        <button class="btn btn-ghost" onclick="goPkgs()">← Back to Packages</button>
       </div>
-      <div class="alert alert-info">
-        <span class="alert-icon">ℹ️</span>
-        <span>You will receive an M-Pesa prompt on your phone. Enter your PIN to complete payment. Keep this page open.</span>
-      </div>
+      <div class="al al-i"><span class="al-ic">ℹ️</span><span>You will receive an M-Pesa prompt. Enter your PIN to complete. Keep this page open.</span></div>
     </div>
 
-    <!-- STEP 3: WAITING -->
-    <div id="sectionWaiting" class="hidden">
+    <!-- Step 3: Waiting -->
+    <div id="secWait" class="hide">
       <div class="card">
-        <div class="payment-waiting">
-          <span class="payment-phone-icon">📲</span>
+        <div class="wait">
+          <span class="wait-ic">📲</span>
           <h3>Check Your Phone!</h3>
-          <p>An M-Pesa request has been sent to your phone.<br>Enter your PIN to complete payment.</p>
-          <div class="timer-ring" id="waitTimer">90</div>
-          <div class="timer-label">seconds remaining</div>
-          <div class="pay-details" id="waitPayDetails"></div>
+          <p>An M-Pesa request was sent to your phone.<br>Enter your PIN to complete payment.</p>
+          <div class="timer" id="timerNum">90</div>
+          <div class="timer-l">seconds remaining</div>
+          <div class="details" id="waitDetails"></div>
           <div class="btn-row">
-            <button class="btn btn-success" id="btnCheckPay" onclick="checkPaymentStatus()" type="button">
-              ✅ I Have Paid
-            </button>
-            <button class="btn btn-danger" onclick="cancelPayment()" type="button">
-              ✕ Cancel
-            </button>
+            <button class="btn btn-green" id="btnPaid" onclick="manualCheck()">✅ I Have Paid</button>
+            <button class="btn btn-red" onclick="cancelPay()">✕ Cancel</button>
           </div>
         </div>
       </div>
-      <div class="alert alert-warning">
-        <span class="alert-icon">⚠️</span>
-        <span>No prompt? Ensure M-Pesa is active on your line. Or use the <strong>Reconnect</strong> tab with your M-Pesa reference after paying.</span>
-      </div>
+      <div class="al al-w"><span class="al-ic">⚠️</span><span>No prompt? Use the <strong>Reconnect</strong> tab with your M-Pesa reference after paying.</span></div>
     </div>
 
-    <!-- SUCCESS -->
-    <div id="sectionSuccess" class="hidden">
+    <!-- Success -->
+    <div id="secDone" class="hide">
       <div class="card">
-        <div class="success-screen">
-          <span class="success-icon">🎉</span>
+        <div class="succ">
+          <span class="succ-ic">🎉</span>
           <h2>You're Connected!</h2>
           <p>Enjoy your internet. Session details below.</p>
-          <div class="session-info" id="sessionInfo"></div>
-          <button class="btn btn-outline btn-block" onclick="location.href='/'" type="button">
-            🏠 Back to Home
-          </button>
+          <div class="sess" id="sessInfo"></div>
+          <button class="btn btn-ghost" onclick="location.href='/'">🏠 Back to Home</button>
         </div>
       </div>
     </div>
 
-  </div><!-- /tab-connect -->
+  </div><!-- /paneConnect -->
 
-  <!-- ═══ RECONNECT TAB ═══ -->
-  <div class="section" id="tab-reconnect">
+  <!-- ══════════════════════════════════════ -->
+  <!-- RECONNECT TAB                          -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="tab-pane" id="paneReconnect">
     <div class="card">
-      <div class="card-title">🔄 Reconnect to WiFi</div>
-      <div class="alert alert-info">
-        <span class="alert-icon">💡</span>
-        <span>Already paid but can't browse? Use your phone number or M-Pesa reference to restore access instantly.</span>
-      </div>
+      <div class="card-ttl">🔄 Reconnect to WiFi</div>
+      <div class="al al-i" style="margin-bottom:13px"><span class="al-ic">💡</span><span>Already paid? Enter your phone or M-Pesa reference to restore access.</span></div>
 
-      <div class="form-group" style="margin-top:14px;">
-        <label class="form-label">Reconnect by Phone Number</label>
-        <div class="phone-wrap">
-          <span class="phone-prefix">🇰🇪</span>
-          <input type="tel" id="reconnectPhone" class="form-input phone-input" placeholder="07XX XXX XXX" inputmode="numeric">
+      <div class="fg">
+        <label class="fl">Phone Number</label>
+        <div class="ph-wrap">
+          <span class="ph-pfx">🇰🇪</span>
+          <input type="tel" id="rcPhone" class="fi ph-in" placeholder="07XX XXX XXX" inputmode="numeric">
         </div>
       </div>
-      <button class="btn btn-primary btn-block mb-14" id="btnReconnectPhone" onclick="reconnectByPhone()" type="button">
-        🔍 Check My Session
-      </button>
+      <button class="btn btn-blue" id="btnRcPhone" onclick="rcByPhone()" style="margin-bottom:13px">🔍 Check My Session</button>
 
-      <div class="or-divider"><span>OR USE M-PESA REFERENCE</span></div>
+      <div class="divider"><span>OR USE M-PESA REFERENCE</span></div>
 
-      <div class="scan-area" onclick="document.getElementById('mpesaRefInput').focus()" role="button" tabindex="0">
-        <span class="scan-icon">🎫</span>
-        <div class="scan-text">Tap here and type your M-Pesa transaction code</div>
+      <div class="scan" onclick="document.getElementById('refIn').focus()">
+        <span class="scan-ic">🎫</span>
+        <div class="scan-t">Tap here then type your M-Pesa reference code</div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">M-Pesa Transaction Reference</label>
-        <input type="text" id="mpesaRefInput" class="form-input" placeholder="e.g. QGH4729KL" maxlength="20"
-          style="text-transform:uppercase;letter-spacing:3px;font-size:17px;font-weight:700;text-align:center;"
-          oninput="this.value=this.value.toUpperCase();autoVerifyRef(this.value);">
-        <div id="refCheckStatus" style="font-size:12px;color:var(--text3);margin-top:5px;text-align:center;min-height:16px;"></div>
+      <div class="fg">
+        <label class="fl">M-Pesa Reference Code</label>
+        <input type="text" id="refIn" class="fi" placeholder="e.g. QGH4729KL" maxlength="20" style="text-transform:uppercase;letter-spacing:3px;font-size:17px;font-weight:700;text-align:center" oninput="this.value=this.value.toUpperCase();autoRef(this.value)">
+        <div id="refStatus" style="font-size:12px;color:#4b5563;margin-top:5px;text-align:center;min-height:16px"></div>
       </div>
 
-      <div id="reconnectAlert" class="hidden" style="margin-bottom:14px;"></div>
-
-      <button class="btn btn-success btn-block" id="btnVerifyRef" onclick="verifyMpesaRef()" type="button">
-        🔓 Verify &amp; Connect
-      </button>
+      <div id="rcMsg" class="hide" style="margin-bottom:11px"></div>
+      <button class="btn btn-green" id="btnVerify" onclick="doVerify()">🔓 Verify &amp; Connect</button>
     </div>
 
-    <div class="card" style="margin-top:14px;">
-      <div class="card-title">❓ Common Issues</div>
-      <div class="info-accordion">
-        <div class="info-header" onclick="toggleAccordion(this)">Phone prompt didn't appear <span class="arrow">▼</span></div>
-        <div class="info-body">
-          <ul>
-            <li>Check your phone has network signal</li>
-            <li>Confirm M-Pesa is active on the line</li>
-            <li>Wait 1–2 minutes and try again</li>
-            <li>If already paid, use your M-Pesa reference above</li>
-          </ul>
-        </div>
-      </div>
-      <div class="info-accordion">
-        <div class="info-header" onclick="toggleAccordion(this)">Money deducted but no internet <span class="arrow">▼</span></div>
-        <div class="info-body">Check your M-Pesa SMS for the reference code (e.g. QGH4729KL), paste it above and tap <strong>Verify &amp; Connect</strong> to restore access immediately.</div>
-      </div>
-      <div class="info-accordion">
-        <div class="info-header" onclick="toggleAccordion(this)">Session expired, need more time <span class="arrow">▼</span></div>
-        <div class="info-body">Go to the <strong>Connect</strong> tab and purchase a new package. Your device data is not affected.</div>
-      </div>
+    <div class="card" style="margin-top:12px">
+      <div class="card-ttl">❓ Common Issues</div>
+      <div class="acc"><div class="acc-h" onclick="tog(this)">Phone prompt didn't appear <span class="acc-arr">▼</span></div><div class="acc-b"><ul><li>Check your phone has network signal</li><li>Confirm M-Pesa is active</li><li>Wait 2 minutes and retry</li><li>If already paid, use your reference code above</li></ul></div></div>
+      <div class="acc"><div class="acc-h" onclick="tog(this)">Money deducted but no internet <span class="acc-arr">▼</span></div><div class="acc-b">Check your M-Pesa SMS for a code like <strong>QGH4729KL</strong>, paste it above and tap <strong>Verify &amp; Connect</strong>.</div></div>
+      <div class="acc"><div class="acc-h" onclick="tog(this)">Session expired, need more time <span class="acc-arr">▼</span></div><div class="acc-b">Go to the <strong>Connect</strong> tab and buy a new package.</div></div>
     </div>
-  </div><!-- /tab-reconnect -->
+  </div><!-- /paneReconnect -->
 
-  <!-- ═══ SUPPORT TAB ═══ -->
-  <div class="section" id="tab-support">
+  <!-- ══════════════════════════════════════ -->
+  <!-- SUPPORT TAB                            -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="tab-pane" id="paneSupport">
     <div class="card">
-      <div class="card-title">📞 Contact Support</div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">
-        Our team is available 7 days a week to help with any connectivity or payment issues.
-      </p>
-      <div class="support-grid">
-        <a href="tel:0796820013" class="support-card">
-          <span class="support-card-icon">📞</span>
-          <div class="support-card-label">Call Us</div>
-          <div class="support-card-value">0796 820 013</div>
-        </a>
-        <a href="mailto:daggytechs@gmail.com" class="support-card">
-          <span class="support-card-icon">✉️</span>
-          <div class="support-card-label">Email Us</div>
-          <div class="support-card-value" style="font-size:10.5px;">daggytechs@gmail.com</div>
-        </a>
-        <a href="https://wa.me/254796820013?text=Hello+Daggynet+Support" class="support-card" target="_blank" rel="noopener">
-          <span class="support-card-icon">💬</span>
-          <div class="support-card-label">WhatsApp</div>
-          <div class="support-card-value">Chat Now</div>
-        </a>
-        <a href="sms:0796820013" class="support-card">
-          <span class="support-card-icon">📲</span>
-          <div class="support-card-label">SMS Us</div>
-          <div class="support-card-value">0796 820 013</div>
-        </a>
+      <div class="card-ttl">📞 Contact Support</div>
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:13px;line-height:1.6">Our team is available 7 days a week for any connection or payment issues.</p>
+      <div class="sup-grid">
+        <a href="tel:0796820013" class="sup-card"><span class="sup-card-ic">📞</span><div class="sup-card-l">Call Us</div><div class="sup-card-v">0796 820 013</div></a>
+        <a href="mailto:daggytechs@gmail.com" class="sup-card"><span class="sup-card-ic">✉️</span><div class="sup-card-l">Email</div><div class="sup-card-v" style="font-size:10.5px">daggytechs@gmail.com</div></a>
+        <a href="https://wa.me/254796820013?text=Hi+Daggynet+Support" target="_blank" class="sup-card"><span class="sup-card-ic">💬</span><div class="sup-card-l">WhatsApp</div><div class="sup-card-v">Chat Now</div></a>
+        <a href="sms:0796820013" class="sup-card"><span class="sup-card-ic">📲</span><div class="sup-card-l">SMS</div><div class="sup-card-v">0796 820 013</div></a>
       </div>
     </div>
 
-    <div class="card" style="margin-top:14px;">
-      <div class="card-title">❓ Frequently Asked Questions</div>
-      <div class="info-accordion">
-        <div class="info-header" onclick="toggleAccordion(this)">How do I connect to WiFi? <span class="arrow">▼</span></div>
-        <div class="info-body">Select a package on the Connect tab, enter your M-Pesa number, approve the payment prompt on your phone, and you'll be automatically connected in seconds.</div>
-      </div>
-      <div class="info-accordion">
-        <div class="info-header" onclick="toggleAccordion(this)">What payment methods are accepted? <span class="arrow">▼</span></div>
-        <div class="info-body">We accept <strong>M-Pesa</strong> via STK Push — a payment request sent directly to your phone. Just enter your PIN when prompted.</div>
-      </div>
-      <div class="info-accordion">
-        <div class="info-header" onclick="toggleAccordion(this)">What happens when my package expires? <span class="arrow">▼</span></div>
-        <div class="info-body">Internet access stops automatically and you'll be redirected here to buy a new package. Nothing on your device is deleted.</div>
-      </div>
-      <div class="info-accordion">
-        <div class="info-header" onclick="toggleAccordion(this)">I was charged but have no internet! <span class="arrow">▼</span></div>
-        <div class="info-body">Go to the <strong>Reconnect</strong> tab, enter your M-Pesa reference code from your confirmation SMS, and tap <strong>Verify &amp; Connect</strong>. Still stuck? Call <strong>0796 820 013</strong>.</div>
-      </div>
-      <div class="info-accordion">
-        <div class="info-header" onclick="toggleAccordion(this)">What speeds can I expect? <span class="arrow">▼</span></div>
-        <div class="info-body">Speeds depend on your package and current network load. Plans range from 3 Mbps (30-min) up to 20 Mbps (Monthly). Speeds are shared across connected users.</div>
-      </div>
+    <div class="card" style="margin-top:12px">
+      <div class="card-ttl">❓ FAQ</div>
+      <div class="acc"><div class="acc-h" onclick="tog(this)">How do I connect to WiFi? <span class="acc-arr">▼</span></div><div class="acc-b">Select a package, enter your M-Pesa number, approve the phone prompt, and you're connected in seconds.</div></div>
+      <div class="acc"><div class="acc-h" onclick="tog(this)">What payment methods work? <span class="acc-arr">▼</span></div><div class="acc-b">We accept <strong>M-Pesa</strong> via STK Push — a prompt sent to your phone. Just enter your PIN.</div></div>
+      <div class="acc"><div class="acc-h" onclick="tog(this)">What happens when my package expires? <span class="acc-arr">▼</span></div><div class="acc-b">Internet stops and you'll be redirected here to buy a new package.</div></div>
+      <div class="acc"><div class="acc-h" onclick="tog(this)">Charged but no internet? <span class="acc-arr">▼</span></div><div class="acc-b">Go to <strong>Reconnect</strong> tab, enter your M-Pesa reference from your SMS, and tap Verify &amp; Connect. Still stuck? Call <strong>0796820013</strong>.</div></div>
+      <div class="acc"><div class="acc-h" onclick="tog(this)">What speeds can I expect? <span class="acc-arr">▼</span></div><div class="acc-b">3 Mbps (30min) up to 20 Mbps (Monthly). Speeds shared across connected users.</div></div>
     </div>
 
-    <div class="card" style="margin-top:14px;">
-      <div class="card-title">📶 Network Info</div>
-      <div style="font-size:13px;color:var(--text2);line-height:2;">
-        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);">
-          <span>Network Name</span><strong id="netSsid">Daggynet_WiFi</strong>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);">
-          <span>Support Phone</span><strong>0796 820 013</strong>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);">
-          <span>Email</span><strong style="font-size:11px;">daggytechs@gmail.com</strong>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;">
-          <span>Status</span><strong style="color:var(--success-light);">🟢 Online</strong>
-        </div>
-      </div>
+    <div class="card" style="margin-top:12px">
+      <div class="card-ttl">📶 Network Info</div>
+      <div class="net-row"><span>Network Name</span><strong id="netSsid">Daggynet_WiFi</strong></div>
+      <div class="net-row"><span>Support Phone</span><strong>0796 820 013</strong></div>
+      <div class="net-row"><span>Email</span><strong style="font-size:11px">daggytechs@gmail.com</strong></div>
+      <div class="net-row"><span>Status</span><strong style="color:#34d399">🟢 Online</strong></div>
     </div>
-  </div><!-- /tab-support -->
+  </div><!-- /paneSupport -->
 
-</div><!-- /container -->
+</div><!-- /wrap -->
 
-<div class="footer">
-  <p>© 2024 <strong>Daggynet Hotspot</strong> · Powered by Daggy Techs</p>
-  <p style="margin-top:4px;"><a href="tel:0796820013">0796820013</a> · <a href="mailto:daggytechs@gmail.com">daggytechs@gmail.com</a></p>
+<div class="foot">
+  <div>© 2024 <strong>Daggynet Hotspot</strong> · Daggy Techs</div>
+  <div style="margin-top:3px"><a href="tel:0796820013">0796820013</a> · <a href="mailto:daggytechs@gmail.com">daggytechs@gmail.com</a></div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toastEl"></div>
 
 <script>
-// STATE
-var state={packages:[],selectedPackage:null,phone:'',checkoutRequestId:'',transactionId:'',waitTimer:null,pollTimer:null,secondsLeft:90};
+// ─── GLOBALS ──────────────────────────────────────────────────────────────────
+var pkgs = [];
+var selPkg = null;
+var curPhone = '';
+var curCheckoutId = '';
+var curTxId = '';
+var countdown = 90;
+var timerInt = null;
+var pollInt = null;
+var refTimout = null;
 
-// INIT
-document.addEventListener('DOMContentLoaded',function(){
-  loadPortalData();
-  checkExistingSession();
-  ['phoneInput','reconnectPhone'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(!el)return;
-    el.addEventListener('input',function(){this.value=this.value.replace(/[^0-9+]/g,'');});
-    el.addEventListener('keydown',function(e){if(e.key==='Enter'){id==='phoneInput'?initiatePayment():reconnectByPhone();}});
+// ─── BOOT ─────────────────────────────────────────────────────────────────────
+window.onload = function() {
+  loadPkgs();
+  checkSession();
+  document.getElementById('phoneIn').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doPay();
   });
-});
+  document.getElementById('rcPhone').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') rcByPhone();
+  });
+};
 
-// LOAD DATA
-function loadPortalData(){
+// ─── TAB SWITCHING ─────────────────────────────────────────────────────────────
+function openTab(t) {
+  var tabs = ['connect','reconnect','support'];
+  for (var i = 0; i < tabs.length; i++) {
+    var pane = document.getElementById('pane' + cap(tabs[i]));
+    var btn  = document.getElementById('tn' + cap(tabs[i]));
+    if (tabs[i] === t) {
+      pane.classList.add('on');
+      btn.classList.add('on');
+    } else {
+      pane.classList.remove('on');
+      btn.classList.remove('on');
+    }
+  }
+  var steps = document.getElementById('stepsEl');
+  steps.style.display = t === 'connect' ? 'flex' : 'none';
+}
+
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ─── LOAD PACKAGES ─────────────────────────────────────────────────────────────
+function loadPkgs() {
   fetch('/api/portal-data')
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.success){
-        state.packages=d.packages;
-        renderPackages(d.packages);
-        if(d.settings){
-          var n=d.settings.businessName||'Daggynet';
-          document.getElementById('heroTitle').innerHTML='Welcome to <span>'+n+'</span>';
-          document.getElementById('heroSub').textContent=d.settings.subtitle||'Fast & Reliable Internet Access';
-          if(d.settings.hotspot_ssid){var s=document.getElementById('netSsid');if(s)s.textContent=d.settings.hotspot_ssid;}
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success && d.packages && d.packages.length) {
+        pkgs = d.packages;
+      } else {
+        pkgs = defaultPkgs();
+      }
+      if (d.settings) {
+        if (d.settings.businessName) {
+          document.getElementById('heroTitle').innerHTML = 'Welcome to <span>' + d.settings.businessName + '</span>';
+        }
+        if (d.settings.subtitle) {
+          document.getElementById('heroSub').textContent = d.settings.subtitle;
+        }
+        if (d.settings.hotspot_ssid) {
+          document.getElementById('netSsid').textContent = d.settings.hotspot_ssid;
         }
       }
+      renderPkgs();
     })
-    .catch(function(){
-      var fb=[
-        {_id:'30min',displayName:'30 Min',price:5,durationLabel:'30 Minutes',downloadSpeed:3,uploadSpeed:1,icon:'⏱️',color:'#ef4444'},
-        {_id:'1hr',displayName:'1 Hour',price:10,durationLabel:'1 Hour',downloadSpeed:5,uploadSpeed:2,icon:'⚡',color:'#f59e0b'},
-        {_id:'daily',displayName:'Daily',price:50,durationLabel:'24 Hours',downloadSpeed:10,uploadSpeed:5,icon:'🌅',color:'#3b82f6',popular:true},
-        {_id:'weekly',displayName:'Weekly',price:200,durationLabel:'7 Days',downloadSpeed:15,uploadSpeed:8,icon:'📅',color:'#8b5cf6'},
-        {_id:'monthly',displayName:'Monthly',price:500,durationLabel:'30 Days',downloadSpeed:20,uploadSpeed:10,icon:'🗓️',color:'#10b981'}
-      ];
-      state.packages=fb;
-      renderPackages(fb);
+    .catch(function() {
+      pkgs = defaultPkgs();
+      renderPkgs();
     });
 }
 
-// RENDER PACKAGES
-function renderPackages(pkgs){
-  var grid=document.getElementById('packagesGrid');
-  if(!grid)return;
-  grid.innerHTML=pkgs.map(function(p){
-    var id=String(p._id||p.name||'');
-    return '<div class="pkg-card" id="pkg-'+id+'" onclick="selectPackage(\''+id+'\')" role="button" tabindex="0">'
-      +(p.popular?'<div class="pkg-popular">⭐ Popular</div>':'')
-      +'<span class="pkg-icon">'+(p.icon||'📦')+'</span>'
-      +'<div class="pkg-name">'+p.displayName+'</div>'
-      +'<div class="pkg-duration">'+p.durationLabel+'</div>'
-      +'<div class="pkg-price" style="color:'+(p.color||'#3b82f6')+'">KSh '+p.price+'<small>/access</small></div>'
-      +'<div class="pkg-speed">⬇️'+p.downloadSpeed+'Mbps ⬆️'+(p.uploadSpeed||1)+'Mbps</div>'
-      +'</div>';
-  }).join('');
+function defaultPkgs() {
+  return [
+    {_id:'30min', displayName:'30 Min',  price:5,   durationLabel:'30 Minutes', downloadSpeed:3,  uploadSpeed:1,  icon:'⏱️', color:'#ef4444'},
+    {_id:'1hr',   displayName:'1 Hour',  price:10,  durationLabel:'1 Hour',     downloadSpeed:5,  uploadSpeed:2,  icon:'⚡', color:'#f59e0b'},
+    {_id:'daily', displayName:'Daily',   price:50,  durationLabel:'24 Hours',   downloadSpeed:10, uploadSpeed:5,  icon:'🌅', color:'#3b82f6', popular:true},
+    {_id:'weekly',displayName:'Weekly',  price:200, durationLabel:'7 Days',     downloadSpeed:15, uploadSpeed:8,  icon:'📅', color:'#8b5cf6'},
+    {_id:'monthly',displayName:'Monthly',price:500, durationLabel:'30 Days',    downloadSpeed:20, uploadSpeed:10, icon:'🗓️', color:'#10b981'}
+  ];
 }
 
-// SELECT PACKAGE
-function selectPackage(id){
-  state.selectedPackage=null;
-  for(var i=0;i<state.packages.length;i++){
-    var p=state.packages[i];
-    if(String(p._id||p.name||'')==String(id)){state.selectedPackage=p;break;}
+function renderPkgs() {
+  var g = document.getElementById('pkgGrid');
+  var html = '';
+  for (var i = 0; i < pkgs.length; i++) {
+    var p = pkgs[i];
+    var id = String(p._id || p.name || i);
+    html += '<div class="pkg" id="pk' + id + '" data-id="' + id + '" onclick="selPkg_fn(\'' + id + '\')">';
+    if (p.popular) html += '<div class="pkg-pop">⭐ Popular</div>';
+    html += '<span class="pkg-ic">' + (p.icon || '📦') + '</span>';
+    html += '<div class="pkg-nm">' + p.displayName + '</div>';
+    html += '<div class="pkg-dur">' + p.durationLabel + '</div>';
+    html += '<div class="pkg-pr" style="color:' + (p.color || '#3b82f6') + '">KSh ' + p.price + '<small>/access</small></div>';
+    html += '<div class="pkg-sp">⬇️' + p.downloadSpeed + 'M ⬆️' + (p.uploadSpeed || 1) + 'M</div>';
+    html += '</div>';
   }
-  if(!state.selectedPackage)return;
-  document.querySelectorAll('.pkg-card').forEach(function(c){c.classList.remove('selected');});
-  var card=document.getElementById('pkg-'+id);
-  if(card)card.classList.add('selected');
-  var btn=document.getElementById('btnContinue');
-  if(btn)btn.disabled=false;
-  showAlert('pkgAlert','✅ Selected: '+state.selectedPackage.displayName+' — KSh '+state.selectedPackage.price,'success');
+  g.innerHTML = html;
 }
 
-// PROCEED TO PAYMENT
-function proceedToPayment(){
-  if(!state.selectedPackage){showAlert('pkgAlert','Please select a package first','warning');return;}
-  hide('sectionPackages');show('sectionPayment');setStep(2);
-  var p=state.selectedPackage;
-  document.getElementById('selectedPkgSummary').innerHTML=
-    '<div class="pay-detail-row"><span>Package</span><span>'+(p.icon||'')+' '+p.displayName+'</span></div>'
-    +'<div class="pay-detail-row"><span>Duration</span><span>'+p.durationLabel+'</span></div>'
-    +'<div class="pay-detail-row"><span>Speed</span><span>↓'+p.downloadSpeed+'Mbps / ↑'+(p.uploadSpeed||1)+'Mbps</span></div>'
-    +'<div class="pay-detail-row"><span style="font-weight:700">Amount</span><span style="font-size:18px;font-weight:900;color:var(--success-light)">KSh '+p.price+'</span></div>';
-  setTimeout(function(){var ph=document.getElementById('phoneInput');if(ph)ph.focus();},120);
+// ─── SELECT PACKAGE ────────────────────────────────────────────────────────────
+function selPkg_fn(id) {
+  selPkg = null;
+  for (var i = 0; i < pkgs.length; i++) {
+    if (String(pkgs[i]._id || pkgs[i].name || i) === String(id)) {
+      selPkg = pkgs[i];
+      break;
+    }
+  }
+  if (!selPkg) return;
+  var cards = document.querySelectorAll('.pkg');
+  for (var j = 0; j < cards.length; j++) cards[j].classList.remove('sel');
+  var el = document.getElementById('pk' + id);
+  if (el) el.classList.add('sel');
+  document.getElementById('btnContinue').disabled = false;
+  showMsg('pkgMsg', '✅ Selected: ' + selPkg.displayName + ' — KSh ' + selPkg.price, 'al-s');
 }
 
-// BACK
-function backToPackages(){
-  hide('sectionPayment');show('sectionPackages');setStep(1);hideAlert('payAlert');
+// ─── GOTO PAYMENT ──────────────────────────────────────────────────────────────
+function gotoPayment() {
+  if (!selPkg) { showMsg('pkgMsg', '⚠️ Please select a package first', 'al-w'); return; }
+  hide('secPkgs'); show('secPay'); setStep(2);
+  document.getElementById('pkgSummary').innerHTML =
+    '<div class="drow"><span>Package</span><span>' + (selPkg.icon||'') + ' ' + selPkg.displayName + '</span></div>' +
+    '<div class="drow"><span>Duration</span><span>' + selPkg.durationLabel + '</span></div>' +
+    '<div class="drow"><span>Speed</span><span>↓' + selPkg.downloadSpeed + 'M / ↑' + (selPkg.uploadSpeed||1) + 'M</span></div>' +
+    '<div class="drow"><span><strong>Amount</strong></span><span style="font-size:17px;font-weight:900;color:#34d399">KSh ' + selPkg.price + '</span></div>';
+  setTimeout(function() { document.getElementById('phoneIn').focus(); }, 100);
 }
 
-// INITIATE PAYMENT
-function initiatePayment(){
-  var phoneEl=document.getElementById('phoneInput');
-  var phone=phoneEl?phoneEl.value.trim():'';
-  if(!phone||phone.replace(/[^0-9]/g,'').length<9){showAlert('payAlert','⚠️ Enter a valid M-Pesa number (e.g. 0712345678)','warning');return;}
-  var btn=document.getElementById('btnPay');
-  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Sending STK Push...';
-  hideAlert('payAlert');
-  var pkgId=String(state.selectedPackage._id||state.selectedPackage.name||'');
-  fetch('/api/mpesa/pay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone,packageId:pkgId,mac:getQueryParam('mac')||'',ip:''})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.success){state.phone=phone;state.checkoutRequestId=d.checkoutRequestId||'';state.transactionId=d.transactionId||'';showWaitingScreen(d);}
-      else{showAlert('payAlert','❌ '+(d.message||'Payment failed. Try again.'),'danger');btn.disabled=false;btn.innerHTML='💳 Pay via M-Pesa STK Push';}
-    })
-    .catch(function(){showAlert('payAlert','❌ Connection error. Try again.','danger');btn.disabled=false;btn.innerHTML='💳 Pay via M-Pesa STK Push';});
+// ─── BACK ──────────────────────────────────────────────────────────────────────
+function goPkgs() {
+  hide('secPay'); show('secPkgs'); setStep(1); hideMsg('payMsg');
 }
 
-// SHOW WAITING
-function showWaitingScreen(data){
-  hide('sectionPayment');show('sectionWaiting');setStep(3);
-  var p=state.selectedPackage;
-  document.getElementById('waitPayDetails').innerHTML=
-    '<div class="pay-detail-row"><span>Phone</span><span>'+state.phone+'</span></div>'
-    +'<div class="pay-detail-row"><span>Package</span><span>'+p.displayName+'</span></div>'
-    +'<div class="pay-detail-row"><span>Amount</span><span style="color:var(--success-light);font-weight:700">KSh '+p.price+'</span></div>'
-    +(data.demo?'<div class="pay-detail-row"><span>Mode</span><span style="color:var(--warning-light)">⚡ Demo</span></div>':'');
-  state.secondsLeft=90;
-  var timerEl=document.getElementById('waitTimer');
-  clearInterval(state.waitTimer);
-  state.waitTimer=setInterval(function(){
-    state.secondsLeft--;
-    if(timerEl)timerEl.textContent=state.secondsLeft;
-    if(state.secondsLeft<=0){clearInterval(state.waitTimer);clearInterval(state.pollTimer);}
-  },1000);
-  clearInterval(state.pollTimer);
-  state.pollTimer=setInterval(function(){
-    if(state.secondsLeft<=0){clearInterval(state.pollTimer);return;}
-    pollPayment().then(function(paid){if(paid){clearInterval(state.pollTimer);clearInterval(state.waitTimer);}});
-  },6000);
-  if(data.demo){setTimeout(checkPaymentStatus,2500);}
-}
+// ─── DO PAYMENT ────────────────────────────────────────────────────────────────
+function doPay() {
+  var phone = document.getElementById('phoneIn').value.replace(/\s/g,'');
+  if (!phone || phone.replace(/[^0-9]/g,'').length < 9) {
+    showMsg('payMsg', '⚠️ Enter a valid M-Pesa number e.g. 0712345678', 'al-w'); return;
+  }
+  var btn = document.getElementById('btnPay');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Sending STK Push...';
+  hideMsg('payMsg');
 
-// POLL PAYMENT
-function pollPayment(){
-  var pkgId=state.selectedPackage?String(state.selectedPackage._id||state.selectedPackage.name||''):'';
-  return fetch('/api/mpesa/query',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({checkoutRequestId:state.checkoutRequestId,transactionId:state.transactionId,phone:state.phone,packageId:pkgId,mac:getQueryParam('mac')||''})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.success&&d.status==='completed'){showSuccessScreen({mpesaRef:d.mpesaRef});return true;}
-      if(d.status==='cancelled'){clearInterval(state.waitTimer);toast('Payment cancelled. Please try again.');setTimeout(cancelPayment,1500);return true;}
-      return false;
-    })
-    .catch(function(){return false;});
-}
-
-// CHECK PAYMENT MANUALLY
-function checkPaymentStatus(){
-  var btn=document.getElementById('btnCheckPay');
-  if(btn){btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Checking...';}
-  clearInterval(state.pollTimer);
-  pollPayment().then(function(paid){
-    if(!paid){if(btn){btn.disabled=false;btn.innerHTML='✅ I Have Paid';}toast('⏳ Not confirmed yet. Please wait a moment or contact support.');}
+  var pkgId = String(selPkg._id || selPkg.name || '');
+  fetch('/api/mpesa/pay', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({phone:phone, packageId:pkgId, mac:qp('mac')||'', ip:''})
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.success) {
+      curPhone = phone;
+      curCheckoutId = d.checkoutRequestId || '';
+      curTxId = d.transactionId || '';
+      showWaiting(d);
+    } else {
+      showMsg('payMsg', '❌ ' + (d.message || 'Payment failed. Try again.'), 'al-e');
+      btn.disabled = false;
+      btn.innerHTML = '💳 Pay via M-Pesa STK Push';
+    }
+  })
+  .catch(function() {
+    showMsg('payMsg', '❌ Connection error. Check internet and retry.', 'al-e');
+    btn.disabled = false;
+    btn.innerHTML = '💳 Pay via M-Pesa STK Push';
   });
 }
 
-// CANCEL
-function cancelPayment(){
-  clearInterval(state.waitTimer);clearInterval(state.pollTimer);
-  hide('sectionWaiting');show('sectionPayment');setStep(2);
-  var btn=document.getElementById('btnPay');
-  if(btn){btn.disabled=false;btn.innerHTML='💳 Pay via M-Pesa STK Push';}
+// ─── SHOW WAITING ─────────────────────────────────────────────────────────────
+function showWaiting(d) {
+  hide('secPay'); show('secWait'); setStep(3);
+  document.getElementById('waitDetails').innerHTML =
+    '<div class="drow"><span>Phone</span><span>' + curPhone + '</span></div>' +
+    '<div class="drow"><span>Package</span><span>' + selPkg.displayName + '</span></div>' +
+    '<div class="drow"><span>Amount</span><span style="color:#34d399;font-weight:700">KSh ' + selPkg.price + '</span></div>' +
+    (d.demo ? '<div class="drow"><span>Mode</span><span style="color:#fcd34d">⚡ Demo</span></div>' : '');
+
+  countdown = 90;
+  document.getElementById('timerNum').textContent = '90';
+  clearInterval(timerInt);
+  timerInt = setInterval(function() {
+    countdown--;
+    document.getElementById('timerNum').textContent = countdown;
+    if (countdown <= 0) { clearInterval(timerInt); clearInterval(pollInt); }
+  }, 1000);
+
+  clearInterval(pollInt);
+  pollInt = setInterval(function() {
+    if (countdown <= 0) { clearInterval(pollInt); return; }
+    pollStatus().then(function(done) {
+      if (done) { clearInterval(pollInt); clearInterval(timerInt); }
+    });
+  }, 6000);
+
+  if (d.demo) { setTimeout(manualCheck, 2500); }
 }
 
-// SUCCESS
-function showSuccessScreen(data){
-  clearInterval(state.waitTimer);clearInterval(state.pollTimer);
-  hide('sectionWaiting');show('sectionSuccess');
-  var p=state.selectedPackage;
-  document.getElementById('sessionInfo').innerHTML=
-    '<div class="session-row"><span>Package</span><span>'+(p.icon||'')+' '+p.displayName+'</span></div>'
-    +'<div class="session-row"><span>Duration</span><span>'+p.durationLabel+'</span></div>'
-    +'<div class="session-row"><span>Speed</span><span>↓'+p.downloadSpeed+' Mbps</span></div>'
-    +'<div class="session-row"><span>Phone</span><span>'+state.phone+'</span></div>'
-    +(data.mpesaRef?'<div class="session-row"><span>M-Pesa Ref</span><span>'+data.mpesaRef+'</span></div>':'')
-    +'<div class="countdown-bar"><div class="countdown-fill"></div></div>';
+// ─── POLL STATUS ──────────────────────────────────────────────────────────────
+function pollStatus() {
+  var pkgId = String(selPkg._id || selPkg.name || '');
+  return fetch('/api/mpesa/query', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({checkoutRequestId:curCheckoutId, transactionId:curTxId, phone:curPhone, packageId:pkgId, mac:qp('mac')||''})
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.success && d.status === 'completed') { showDone({mpesaRef:d.mpesaRef}); return true; }
+    if (d.status === 'cancelled') { toast('Payment cancelled. Try again.'); setTimeout(cancelPay, 1500); return true; }
+    return false;
+  })
+  .catch(function() { return false; });
+}
+
+// ─── MANUAL CHECK ─────────────────────────────────────────────────────────────
+function manualCheck() {
+  var btn = document.getElementById('btnPaid');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Checking...';
+  clearInterval(pollInt);
+  pollStatus().then(function(done) {
+    if (!done) {
+      btn.disabled = false;
+      btn.innerHTML = '✅ I Have Paid';
+      toast('⏳ Not confirmed yet. Wait a moment or contact support.');
+    }
+  });
+}
+
+// ─── CANCEL ───────────────────────────────────────────────────────────────────
+function cancelPay() {
+  clearInterval(timerInt); clearInterval(pollInt);
+  hide('secWait'); show('secPay'); setStep(2);
+  var btn = document.getElementById('btnPay');
+  btn.disabled = false;
+  btn.innerHTML = '💳 Pay via M-Pesa STK Push';
+}
+
+// ─── SHOW DONE ────────────────────────────────────────────────────────────────
+function showDone(d) {
+  clearInterval(timerInt); clearInterval(pollInt);
+  hide('secWait'); show('secDone');
+  document.getElementById('sessInfo').innerHTML =
+    '<div class="srow"><span>Package</span><span>' + (selPkg.icon||'') + ' ' + selPkg.displayName + '</span></div>' +
+    '<div class="srow"><span>Duration</span><span>' + selPkg.durationLabel + '</span></div>' +
+    '<div class="srow"><span>Speed</span><span>↓' + selPkg.downloadSpeed + ' Mbps</span></div>' +
+    '<div class="srow"><span>Phone</span><span>' + curPhone + '</span></div>' +
+    (d.mpesaRef ? '<div class="srow"><span>M-Pesa Ref</span><span>' + d.mpesaRef + '</span></div>' : '');
   toast('🎉 Connected! Enjoy your internet.');
 }
 
-// RECONNECT BY PHONE
-function reconnectByPhone(){
-  var phoneEl=document.getElementById('reconnectPhone');
-  var phone=phoneEl?phoneEl.value.trim():'';
-  if(!phone||phone.replace(/[^0-9]/g,'').length<9){showAlert('reconnectAlert','⚠️ Enter a valid phone number','warning');return;}
-  var btn=document.getElementById('btnReconnectPhone');
-  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Checking...';
-  fetch('/check-session?phone='+encodeURIComponent(phone))
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.active){showAlert('reconnectAlert','✅ Active session found! Package: '+d.package+' — Time left: '+d.timeLeft+'. Your internet should be working.','success');}
-      else{showAlert('reconnectAlert','❌ No active session for '+phone+'. Please purchase a package on the Connect tab.','danger');}
+// ─── RECONNECT BY PHONE ───────────────────────────────────────────────────────
+function rcByPhone() {
+  var phone = document.getElementById('rcPhone').value.replace(/\s/g,'');
+  if (!phone || phone.replace(/[^0-9]/g,'').length < 9) {
+    showMsg('rcMsg', '⚠️ Enter a valid phone number', 'al-w'); return;
+  }
+  var btn = document.getElementById('btnRcPhone');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Checking...';
+
+  fetch('/check-session?phone=' + encodeURIComponent(phone))
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.active) {
+        showMsg('rcMsg', '✅ Active session found! Package: ' + d.package + ' — ' + d.timeLeft + ' remaining. Internet should be working.', 'al-s');
+      } else {
+        showMsg('rcMsg', '❌ No active session for ' + phone + '. Please buy a package on the Connect tab.', 'al-e');
+      }
     })
-    .catch(function(){showAlert('reconnectAlert','❌ Error checking. Try again or call 0796820013.','danger');})
-    .finally(function(){btn.disabled=false;btn.innerHTML='🔍 Check My Session';});
+    .catch(function() { showMsg('rcMsg', '❌ Error checking. Try again or call 0796820013.', 'al-e'); })
+    .finally(function() { btn.disabled = false; btn.innerHTML = '🔍 Check My Session'; });
 }
 
-// AUTO-VERIFY REF
-var _refTmr=null;
-function autoVerifyRef(val){
-  clearTimeout(_refTmr);
-  var el=document.getElementById('refCheckStatus');if(!el)return;
-  if(val.length<8){el.textContent='';return;}
-  el.textContent='⏳ Checking...';el.style.color='var(--text3)';
-  _refTmr=setTimeout(function(){
-    fetch('/verify-transaction?ref='+encodeURIComponent(val)+'&mac='+(getQueryParam('mac')||''))
-      .then(function(r){return r.json();})
-      .then(function(d){
-        if(d.success){el.textContent='✅ Valid transaction found!';el.style.color='var(--success-light)';}
-        else{el.textContent='❌ Not found — double-check the code';el.style.color='var(--danger-light)';}
+// ─── AUTO-CHECK REFERENCE ─────────────────────────────────────────────────────
+function autoRef(val) {
+  clearTimeout(refTimout);
+  var el = document.getElementById('refStatus');
+  if (val.length < 8) { el.textContent = ''; return; }
+  el.textContent = '⏳ Checking...';
+  el.style.color = '#4b5563';
+  refTimout = setTimeout(function() {
+    fetch('/verify-transaction?ref=' + encodeURIComponent(val) + '&mac=' + (qp('mac')||''))
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.success) { el.textContent = '✅ Valid transaction found!'; el.style.color = '#34d399'; }
+        else { el.textContent = '❌ Not found — check the code'; el.style.color = '#f87171'; }
       })
-      .catch(function(){el.textContent='';});
-  },800);
+      .catch(function() { el.textContent = ''; });
+  }, 800);
 }
 
-// VERIFY MPESA REF
-function verifyMpesaRef(){
-  var refEl=document.getElementById('mpesaRefInput');
-  var ref=refEl?refEl.value.trim().toUpperCase():'';
-  if(!ref||ref.length<8){showAlert('reconnectAlert','⚠️ Enter the M-Pesa code from your confirmation SMS','warning');return;}
-  var btn=document.getElementById('btnVerifyRef');
-  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Verifying...';
-  hideAlert('reconnectAlert');
-  var phoneEl=document.getElementById('reconnectPhone');
-  fetch('/api/mpesa/manual-verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mpesaRef:ref,mac:getQueryParam('mac')||'',phone:phoneEl?phoneEl.value.trim():''})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.success){showAlert('reconnectAlert','🎉 '+d.message,'success');toast('✅ Access granted! Enjoy browsing.');}
-      else{showAlert('reconnectAlert','❌ '+(d.message||'Verification failed.')+' Call 0796820013 for help.','danger');}
+// ─── VERIFY REF ───────────────────────────────────────────────────────────────
+function doVerify() {
+  var ref = document.getElementById('refIn').value.trim().toUpperCase();
+  if (!ref || ref.length < 8) {
+    showMsg('rcMsg', '⚠️ Enter the M-Pesa reference code from your SMS', 'al-w'); return;
+  }
+  var btn = document.getElementById('btnVerify');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Verifying...';
+  hideMsg('rcMsg');
+
+  var phone = document.getElementById('rcPhone').value.trim();
+  fetch('/api/mpesa/manual-verify', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({mpesaRef:ref, mac:qp('mac')||'', phone:phone})
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.success) {
+      showMsg('rcMsg', '🎉 ' + d.message, 'al-s');
+      toast('✅ Access granted! Enjoy browsing.');
+    } else {
+      showMsg('rcMsg', '❌ ' + (d.message || 'Verification failed.') + ' Call 0796820013.', 'al-e');
+    }
+  })
+  .catch(function() { showMsg('rcMsg', '❌ Error. Call 0796820013.', 'al-e'); })
+  .finally(function() { btn.disabled = false; btn.innerHTML = '🔓 Verify &amp; Connect'; });
+}
+
+// ─── CHECK EXISTING SESSION ───────────────────────────────────────────────────
+function checkSession() {
+  var mac = qp('mac');
+  if (!mac) return;
+  fetch('/check-session?mac=' + encodeURIComponent(mac))
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.active) toast('👋 Welcome back! ' + d.timeLeft + ' left on ' + d.package);
     })
-    .catch(function(){showAlert('reconnectAlert','❌ Error. Contact support: 0796820013','danger');})
-    .finally(function(){btn.disabled=false;btn.innerHTML='🔓 Verify &amp; Connect';});
+    .catch(function() {});
 }
 
-// CHECK EXISTING SESSION
-function checkExistingSession(){
-  var mac=getQueryParam('mac');if(!mac)return;
-  fetch('/check-session?mac='+encodeURIComponent(mac))
-    .then(function(r){return r.json();})
-    .then(function(d){if(d.active)toast('👋 Welcome back! '+d.timeLeft+' left on '+d.package);})
-    .catch(function(){});
+// ─── ACCORDION ────────────────────────────────────────────────────────────────
+function tog(header) {
+  var all = document.querySelectorAll('.acc-h.op');
+  for (var i = 0; i < all.length; i++) {
+    if (all[i] !== header) {
+      all[i].classList.remove('op');
+      var b = all[i].nextElementSibling;
+      if (b) b.classList.remove('op');
+    }
+  }
+  header.classList.toggle('op');
+  var body = header.nextElementSibling;
+  if (body) body.classList.toggle('op');
 }
 
-// HELPERS
-function switchTab(id,btn){
-  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
-  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
-  var sec=document.getElementById('tab-'+id);if(sec)sec.classList.add('active');
-  if(btn)btn.classList.add('active');
-  var si=document.getElementById('stepIndicator');if(si)si.style.display=id==='connect'?'flex':'none';
+// ─── STEP INDICATOR ───────────────────────────────────────────────────────────
+function setStep(n) {
+  var ids = ['stp1','stp2','stp3'];
+  for (var i = 0; i < ids.length; i++) {
+    var el = document.getElementById(ids[i]);
+    if (!el) continue;
+    el.classList.remove('on','done');
+    var numEl = el.querySelector('.stp-n');
+    if (i + 1 < n) { el.classList.add('done'); if (numEl) numEl.textContent = '✓'; }
+    else if (i + 1 === n) { el.classList.add('on'); if (numEl) numEl.textContent = i + 1; }
+    else { if (numEl) numEl.textContent = i + 1; }
+  }
 }
 
-function setStep(n){
-  ['step1','step2','step3'].forEach(function(id,i){
-    var el=document.getElementById(id);if(!el)return;
-    el.classList.remove('active','done');
-    var num=el.querySelector('.step-num');
-    if(i+1<n){el.classList.add('done');if(num)num.textContent='✓';}
-    else if(i+1===n){el.classList.add('active');if(num)num.textContent=i+1;}
-    else{if(num)num.textContent=i+1;}
-  });
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function show(id) { var el = document.getElementById(id); if (el) el.classList.remove('hide'); }
+function hide(id) { var el = document.getElementById(id); if (el) el.classList.add('hide'); }
+
+function showMsg(id, msg, cls) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'al ' + (cls || 'al-i');
+  el.innerHTML = msg;
+  el.classList.remove('hide');
+}
+function hideMsg(id) { var el = document.getElementById(id); if (el) el.classList.add('hide'); }
+
+var toastTimer = null;
+function toast(msg) {
+  var el = document.getElementById('toastEl');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('on'); }, 3500);
 }
 
-function show(id){var el=document.getElementById(id);if(el)el.classList.remove('hidden');}
-function hide(id){var el=document.getElementById(id);if(el)el.classList.add('hidden');}
-
-function showAlert(cid,msg,type){
-  var el=document.getElementById(cid);if(!el)return;
-  var icons={info:'ℹ️',success:'✅',warning:'⚠️',danger:'❌'};
-  el.className='alert alert-'+type;
-  el.innerHTML='<span class="alert-icon">'+(icons[type]||'ℹ️')+'</span><span>'+msg+'</span>';
-}
-function hideAlert(id){var el=document.getElementById(id);if(el)el.className=(el.className||'')+' hidden';}
-
-function toggleAccordion(header){
-  document.querySelectorAll('.info-header.open').forEach(function(h){
-    if(h!==header){h.classList.remove('open');var b=h.nextElementSibling;if(b)b.classList.remove('open');}
-  });
-  header.classList.toggle('open');
-  var body=header.nextElementSibling;if(body)body.classList.toggle('open');
-}
-
-function toast(msg,dur){
-  dur=dur||3500;
-  var el=document.getElementById('toast');if(!el)return;
-  el.textContent=msg;el.classList.add('show');
-  setTimeout(function(){el.classList.remove('show');},dur);
-}
-
-function getQueryParam(name){return new URLSearchParams(window.location.search).get(name);}
+function qp(name) { return new URLSearchParams(window.location.search).get(name); }
 </script>
 </body>
 </html>
